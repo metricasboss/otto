@@ -8,9 +8,9 @@
 
 ## Demo
 
-> **Recording demo GIF...** See `demo/` folder for instructions to record.
->
-> Quick preview: Run `./demo/demo_script.sh` to see OTTO in action
+![OTTO Demo](docs/otto-demo.gif)
+
+*Watch OTTO catch LGPD violations in real-time and save R$ 100 million in fines*
 
 ---
 
