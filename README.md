@@ -361,8 +361,8 @@ Edit `skills/lgpd/patterns.json` or `skills/gdpr/patterns.json`:
 
 - [README.md](README.md) - Complete guide (this file)
 - [QUICKSTART.md](QUICKSTART.md) - 2-minute setup
-- [METRICASBOSS.md](METRICASBOSS.md) - Organization publishing guide
 - [DEPLOY.md](DEPLOY.md) - Deployment instructions
+- [demo/](demo/) - Demo script and GIF recording instructions
 
 ---
 
