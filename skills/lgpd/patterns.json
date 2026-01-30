@@ -1,0 +1,122 @@
+{
+  "cpf_exposure": {
+    "regex": "\\b\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}\\b",
+    "severity": "critical",
+    "article": "LGPD Art. 46 (Dados Sensíveis)",
+    "message": "CPF brasileiro exposto no código",
+    "fix": "Remova o CPF hardcoded. Busque de banco de dados criptografado ou use variável de ambiente para testes.",
+    "fine": "Até R$ 50 milhões"
+  },
+  "rg_exposure": {
+    "regex": "\\b\\d{1,2}\\.\\d{3}\\.\\d{3}-[0-9X]\\b",
+    "severity": "critical",
+    "article": "LGPD Art. 46 (Dados Sensíveis)",
+    "message": "RG brasileiro exposto no código",
+    "fix": "Remova o RG hardcoded. Dados de documentos devem vir de fonte segura.",
+    "fine": "Até R$ 50 milhões"
+  },
+  "cnpj_exposure": {
+    "regex": "\\b\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}\\b",
+    "severity": "high",
+    "article": "LGPD Art. 46",
+    "message": "CNPJ exposto no código",
+    "fix": "Use variável de ambiente: process.env.COMPANY_CNPJ",
+    "fine": "Até R$ 50 milhões"
+  },
+  "email_hardcoded": {
+    "regex": "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b(?=.*[\"'])",
+    "severity": "medium",
+    "article": "LGPD Art. 46",
+    "message": "Email hardcoded no código",
+    "fix": "Use variável de ambiente para emails de configuração.",
+    "fine": "Até R$ 50 milhões"
+  },
+  "phone_br": {
+    "regex": "\\(\\d{2}\\)\\s*9?\\d{4}-?\\d{4}",
+    "severity": "medium",
+    "article": "LGPD Art. 46",
+    "message": "Telefone brasileiro hardcoded",
+    "fix": "Remova telefone do código. Use configuração externa.",
+    "fine": "Até R$ 50 milhões"
+  },
+  "user_logging": {
+    "regex": "console\\.log\\([^)]*user[^)]*\\)|logger\\.(info|debug|error|warn)\\([^)]*user[^)]*\\)",
+    "severity": "critical",
+    "article": "LGPD Art. 46 (Segurança)",
+    "message": "Possível exposição de dados pessoais em logs",
+    "fix": "Log apenas IDs não-sensíveis: console.log('User ID:', user.id) ou use logger.sanitize(user)",
+    "fine": "Até R$ 50 milhões"
+  },
+  "request_logging": {
+    "regex": "logger?\\.[^(]*\\([^)]*req\\.body[^)]*\\)|console\\.log\\([^)]*req\\.body[^)]*\\)",
+    "severity": "critical",
+    "article": "LGPD Art. 46",
+    "message": "req.body pode conter dados pessoais sendo logado sem sanitização",
+    "fix": "Sanitize antes de logar: logger.info(sanitize(req.body))",
+    "fine": "Até R$ 50 milhões"
+  },
+  "tracking_without_consent": {
+    "regex": "analytics\\.track\\([^)]*email[^)]*\\)|analytics\\.track\\([^)]*cpf[^)]*\\)|analytics\\.track\\([^)]*phone[^)]*\\)",
+    "severity": "critical",
+    "article": "LGPD Art. 7º I (Consentimento)",
+    "message": "Tracking com dados pessoais sem verificação de consentimento",
+    "fix": "Adicione verificação: if (user.hasConsent('analytics')) { analytics.track(...) }",
+    "fine": "Até R$ 50 milhões"
+  },
+  "select_all_users": {
+    "regex": "SELECT\\s+\\*\\s+FROM\\s+(users|usuarios|clientes|customers)",
+    "severity": "high",
+    "article": "LGPD Art. 6º III (Necessidade/Minimização)",
+    "message": "Query SELECT * viola princípio da minimização de dados",
+    "fix": "Especifique apenas campos necessários: SELECT id, name, email FROM users",
+    "fine": "Até R$ 50 milhões"
+  },
+  "password_plaintext": {
+    "regex": "password\\s*[:=]\\s*[\"'][^\"']+[\"']|senha\\s*[:=]\\s*[\"'][^\"']+[\"']",
+    "severity": "critical",
+    "article": "LGPD Art. 46 (Segurança)",
+    "message": "Senha em plaintext detectada",
+    "fix": "Use hash: bcrypt.hash(password, 10) antes de armazenar",
+    "fine": "Até R$ 50 milhões"
+  },
+  "api_key_exposure": {
+    "regex": "(api[_-]?key|apikey|api[_-]?secret)\\s*[:=]\\s*[\"'][^\"']{20,}[\"']",
+    "severity": "critical",
+    "article": "LGPD Art. 46",
+    "message": "API key hardcoded no código",
+    "fix": "Use variável de ambiente: process.env.API_KEY",
+    "fine": "Até R$ 50 milhões"
+  },
+  "localstorage_sensitive": {
+    "regex": "localStorage\\.setItem\\([^)]*user[^)]*\\)|localStorage\\.setItem\\([^)]*token[^)]*\\)",
+    "severity": "high",
+    "article": "LGPD Art. 46 (Segurança)",
+    "message": "Dados potencialmente sensíveis em localStorage (não criptografado)",
+    "fix": "Use sessionStorage para tokens ou criptografe antes de armazenar",
+    "fine": "Até R$ 50 milhões"
+  },
+  "cookie_without_consent": {
+    "regex": "document\\.cookie\\s*=.*(?!.*consent)",
+    "severity": "high",
+    "article": "LGPD Art. 7º I",
+    "message": "Cookie sendo criado sem verificar consentimento",
+    "fix": "Verifique consentimento antes: if (cookieConsent.hasConsent('functional')) { ... }",
+    "fine": "Até R$ 50 milhões"
+  },
+  "external_data_sharing": {
+    "regex": "axios\\.(post|put|patch)\\([^)]*user\\.[^)]*\\)|fetch\\([^)]*method:\\s*[\"'](POST|PUT|PATCH)[\"'][^)]*user[^)]*\\)",
+    "severity": "high",
+    "article": "LGPD Art. 7º I (Consentimento) + Art. 16",
+    "message": "Possível compartilhamento de dados com serviço externo",
+    "fix": "Verifique consentimento e minimize dados antes de enviar",
+    "fine": "Até R$ 50 milhões"
+  },
+  "sql_injection_risk": {
+    "regex": "query\\([\"'][^\"']*\\$\\{[^}]+\\}|query\\([\"'][^\"']*\\+\\s*[a-zA-Z]",
+    "severity": "critical",
+    "article": "LGPD Art. 46 (Segurança)",
+    "message": "Possível SQL injection - risco de exposição de dados",
+    "fix": "Use prepared statements com placeholders: query('SELECT * FROM users WHERE id = ?', [userId])",
+    "fine": "Até R$ 50 milhões"
+  }
+}

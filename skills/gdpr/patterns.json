@@ -1,0 +1,138 @@
+{
+  "ssn_us_exposure": {
+    "regex": "\\b\\d{3}-\\d{2}-\\d{4}\\b",
+    "severity": "critical",
+    "article": "GDPR Art. 32 (Security)",
+    "message": "US Social Security Number exposed in code",
+    "fix": "Remove hardcoded SSN. Retrieve from encrypted database or use environment variable for tests.",
+    "fine": "Up to €20M or 4% turnover"
+  },
+  "national_id_eu": {
+    "regex": "\\b[A-Z]{2}\\d{6,9}[A-Z]?\\b",
+    "severity": "critical",
+    "article": "GDPR Art. 32 (Security)",
+    "message": "Possible EU national ID number exposed",
+    "fix": "Remove hardcoded ID. Fetch from secure source.",
+    "fine": "Up to €20M or 4% turnover"
+  },
+  "nhs_number": {
+    "regex": "\\b\\d{3}\\s\\d{3}\\s\\d{4}\\b",
+    "severity": "critical",
+    "article": "GDPR Art. 9 (Special Categories - Health)",
+    "message": "NHS number (UK health ID) exposed",
+    "fix": "Health data requires explicit consent and extra protection.",
+    "fine": "Up to €20M or 4% turnover"
+  },
+  "email_hardcoded": {
+    "regex": "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b(?=.*[\"'])",
+    "severity": "medium",
+    "article": "GDPR Art. 32",
+    "message": "Email address hardcoded in code",
+    "fix": "Use environment variable for configuration emails.",
+    "fine": "Up to €20M or 4% turnover"
+  },
+  "phone_international": {
+    "regex": "\\+\\d{1,3}\\s?\\d{1,4}\\s?\\d{1,4}\\s?\\d{1,9}",
+    "severity": "medium",
+    "article": "GDPR Art. 32",
+    "message": "Phone number hardcoded",
+    "fix": "Remove phone from code. Use external configuration.",
+    "fine": "Up to €20M or 4% turnover"
+  },
+  "user_logging": {
+    "regex": "console\\.log\\([^)]*user[^)]*\\)|logger\\.(info|debug|error|warn)\\([^)]*user[^)]*\\)",
+    "severity": "critical",
+    "article": "GDPR Art. 32 (Security)",
+    "message": "Possible personal data exposure in logs",
+    "fix": "Log only non-sensitive IDs: console.log('User ID:', user.id) or use logger.sanitize(user)",
+    "fine": "Up to €20M or 4% turnover"
+  },
+  "request_logging": {
+    "regex": "logger?\\.[^(]*\\([^)]*req\\.body[^)]*\\)|console\\.log\\([^)]*req\\.body[^)]*\\)",
+    "severity": "critical",
+    "article": "GDPR Art. 32",
+    "message": "req.body may contain personal data being logged without sanitization",
+    "fix": "Sanitize before logging: logger.info(sanitize(req.body))",
+    "fine": "Up to €20M or 4% turnover"
+  },
+  "tracking_without_consent": {
+    "regex": "analytics\\.track\\([^)]*email[^)]*\\)|analytics\\.track\\([^)]*ssn[^)]*\\)|analytics\\.track\\([^)]*phone[^)]*\\)",
+    "severity": "critical",
+    "article": "GDPR Art. 6(1)(a) (Consent)",
+    "message": "Tracking with personal data without consent verification",
+    "fix": "Add verification: if (user.hasConsent('analytics')) { analytics.track(...) }",
+    "fine": "Up to €20M or 4% turnover"
+  },
+  "select_all_users": {
+    "regex": "SELECT\\s+\\*\\s+FROM\\s+(users|customers|members|clients)",
+    "severity": "high",
+    "article": "GDPR Art. 5(1)(c) (Data Minimisation)",
+    "message": "SELECT * query violates data minimisation principle",
+    "fix": "Specify only necessary fields: SELECT id, name, email FROM users",
+    "fine": "Up to €20M or 4% turnover"
+  },
+  "password_plaintext": {
+    "regex": "password\\s*[:=]\\s*[\"'][^\"']+[\"']",
+    "severity": "critical",
+    "article": "GDPR Art. 32 (Security)",
+    "message": "Password in plaintext detected",
+    "fix": "Use hash: bcrypt.hash(password, 10) before storing",
+    "fine": "Up to €20M or 4% turnover"
+  },
+  "api_key_exposure": {
+    "regex": "(api[_-]?key|apikey|api[_-]?secret)\\s*[:=]\\s*[\"'][^\"']{20,}[\"']",
+    "severity": "critical",
+    "article": "GDPR Art. 32",
+    "message": "API key hardcoded in code",
+    "fix": "Use environment variable: process.env.API_KEY",
+    "fine": "Up to €20M or 4% turnover"
+  },
+  "localstorage_sensitive": {
+    "regex": "localStorage\\.setItem\\([^)]*user[^)]*\\)|localStorage\\.setItem\\([^)]*token[^)]*\\)",
+    "severity": "high",
+    "article": "GDPR Art. 32 (Security)",
+    "message": "Potentially sensitive data in localStorage (unencrypted)",
+    "fix": "Use sessionStorage for tokens or encrypt before storing",
+    "fine": "Up to €20M or 4% turnover"
+  },
+  "cookie_without_consent": {
+    "regex": "document\\.cookie\\s*=.*(?!.*consent)",
+    "severity": "high",
+    "article": "GDPR Art. 6(1)(a)",
+    "message": "Cookie being set without checking consent",
+    "fix": "Check consent first: if (cookieConsent.hasConsent('functional')) { ... }",
+    "fine": "Up to €20M or 4% turnover"
+  },
+  "external_data_sharing": {
+    "regex": "axios\\.(post|put|patch)\\([^)]*user\\.[^)]*\\)|fetch\\([^)]*method:\\s*[\"'](POST|PUT|PATCH)[\"'][^)]*user[^)]*\\)",
+    "severity": "high",
+    "article": "GDPR Art. 6(1)(a) + Art. 44 (Transfers)",
+    "message": "Possible data sharing with external service",
+    "fix": "Check consent and minimize data before sending",
+    "fine": "Up to €20M or 4% turnover"
+  },
+  "sql_injection_risk": {
+    "regex": "query\\([\"'][^\"']*\\$\\{[^}]+\\}|query\\([\"'][^\"']*\\+\\s*[a-zA-Z]",
+    "severity": "critical",
+    "article": "GDPR Art. 32 (Security)",
+    "message": "Possible SQL injection - risk of data exposure",
+    "fix": "Use prepared statements with placeholders: query('SELECT * FROM users WHERE id = ?', [userId])",
+    "fine": "Up to €20M or 4% turnover"
+  },
+  "health_data_exposure": {
+    "regex": "(medical|health|diagnosis|prescription|patient)\\s*[:=]",
+    "severity": "critical",
+    "article": "GDPR Art. 9 (Special Categories)",
+    "message": "Possible health data exposure (special category requiring explicit consent)",
+    "fix": "Health data requires explicit consent and enhanced security measures",
+    "fine": "Up to €20M or 4% turnover"
+  },
+  "biometric_data": {
+    "regex": "(fingerprint|facial[_-]?recognition|iris[_-]?scan|biometric)",
+    "severity": "critical",
+    "article": "GDPR Art. 9 (Special Categories)",
+    "message": "Biometric data processing detected (special category)",
+    "fix": "Biometric data requires explicit consent and must be processed with enhanced security",
+    "fine": "Up to €20M or 4% turnover"
+  }
+}
