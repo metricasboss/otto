@@ -422,12 +422,4 @@ MIT License - See [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 
-Named in honor of **Otto**, because protecting data should be as natural as protecting family.
-
 Built by the [Métricas Boss](https://github.com/metricasboss) community for developers who value privacy compliance.
-
----
-
-**OTTO** - Guarding your code like family
-
-*Making privacy compliance automatic, one line of code at a time.*
