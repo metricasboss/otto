@@ -1,87 +1,84 @@
-# 🛡️ OTTO.ai - Privacy Guardian
+# OTTO.ai - Privacy Guardian
 
 **Automated privacy compliance for Claude Code**
 
-> **By [Métricas Boss](https://github.com/metricasboss)** - A comunidade brasileira de Analytics & Privacy
-
-Named in honor of Otto - Protecting personal data like you protect family.
+> By [Métricas Boss](https://github.com/metricasboss) - A comunidade brasileira de Analytics & Privacy
 
 ---
 
-## 🌍 Multi-Regulation Support
-
-- 🇧🇷 **LGPD** (Lei 13.709/18) - Brazil
-- 🇪🇺 **GDPR** (EU 2016/679) - Europe
+## Overview
 
 OTTO.ai automatically detects privacy violations in your code before they reach production, helping you avoid fines up to **R$ 50 million (LGPD)** or **€20M / 4% turnover (GDPR)**.
 
+**Supported Regulations:**
+- 🇧🇷 LGPD (Lei 13.709/18) - Brazil
+- 🇪🇺 GDPR (EU 2016/679) - Europe
+
 ---
 
-## ⚡ Quick Install
+## Quick Install
 
 ```bash
-# Clone the repository
 git clone https://github.com/metricasboss/otto.git
 cd otto
-
-# Run the installer
-chmod +x install.sh
 ./install.sh
 ```
 
 The installer will:
 1. Ask which regulation you want (LGPD, GDPR, or both)
 2. Install OTTO.ai as a Claude Code skill
-3. Optionally configure automatic protection (hooks)
-4. Set everything up automatically
+3. Optionally configure automatic protection via hooks
+4. Set everything up in `~/.claude/skills/otto/`
 
 ---
 
-## 🎯 What OTTO.ai Detects
-
-### 🇧🇷 LGPD Violations
-
-✅ CPF/RG/CNPJ hardcoded in code
-✅ Personal data in logs (console.log, logger)
-✅ Tracking/analytics without consent
-✅ SQL queries violating data minimisation
-✅ Passwords in plaintext
-✅ API keys exposed
-✅ Cookies without consent
-✅ Data sharing with third parties
-✅ SQL injection risks
-
-### 🇪🇺 GDPR Violations
-
-✅ SSN/National ID numbers exposed
-✅ Personal data in logs
-✅ Tracking without consent
-✅ SELECT * queries (data minimisation)
-✅ Unencrypted sensitive data
-✅ Health/biometric data (special categories)
-✅ API keys and secrets
-✅ localStorage misuse
-✅ External data transfers
-
----
-
-## 💰 Fines You Can Avoid
+## What OTTO.ai Detects
 
 ### LGPD (Brazil)
-- **Up to R$ 50 million per violation** (Art. 52)
-- Public disclosure of violations
-- Data blocking/deletion orders
+- CPF/RG/CNPJ hardcoded in code
+- Personal data in logs (console.log, logger)
+- Tracking/analytics without consent verification
+- SQL queries violating data minimization (SELECT *)
+- Passwords in plaintext
+- API keys and secrets exposed
+- Cookies set without consent
+- Data sharing with third parties without authorization
+- SQL injection vulnerabilities
 
 ### GDPR (Europe)
-- **Up to €20M or 4% of annual global turnover** (whichever is higher)
-- Applies per violation
-- Cumulative fines for multiple violations
-
-**Example:** 3 critical violations = potential R$ 150M (LGPD) or €60M (GDPR)
+- SSN/National ID numbers exposed
+- Personal data in logs
+- Tracking without consent
+- Queries violating data minimization
+- Unencrypted sensitive data
+- Health/biometric data (special categories)
+- localStorage misuse for sensitive data
+- External data transfers without legal basis
 
 ---
 
-## 🚀 How to Use
+## How It Works
+
+### As a Claude Code Skill
+
+OTTO.ai integrates seamlessly with Claude Code:
+
+1. **Automatic invocation**: Claude uses OTTO.ai when it detects code accessing personal data
+2. **Real-time feedback**: Get immediate warnings about privacy violations
+3. **Fix suggestions**: Receive corrected code that complies with regulations
+4. **Educational**: Learn privacy principles while coding
+
+### As a Hook (Optional)
+
+When hooks are enabled, OTTO.ai validates code automatically:
+
+- **Before edits**: Blocks privacy violations before they're saved
+- **Before commits**: Ensures clean commits
+- **CI/CD ready**: Can integrate into your build pipeline
+
+---
+
+## Usage
 
 ### Automatic Mode (Recommended)
 
@@ -89,10 +86,9 @@ Once installed with hooks enabled, OTTO.ai works automatically:
 
 ```javascript
 // You write code with privacy issues
-console.log('User:', user); // ❌ Exposes PII
+console.log('User:', user); // Exposes PII
 
 // OTTO.ai blocks and suggests fix:
-// 🛡️ OTTO.ai detected privacy violation
 // Use: console.log('User ID:', user.id)
 ```
 
@@ -121,179 +117,143 @@ python3 ~/.claude/skills/otto/scripts/scan_privacy.py myfile.js
 
 ---
 
-## 📋 Example Output
+## Example Output
 
 ```
-🛡️ OTTO.ai - LGPD Privacy Analysis
+OTTO.ai - LGPD Privacy Analysis
 
-❌ VIOLATIONS FOUND: 3
+VIOLATIONS FOUND: 3
 
-📁 File: src/auth/login.js
+File: src/auth/login.js
 
-1. 🚨 Cpf Exposure
+1. CPF Exposure
    Line: 15
    Severity: CRITICAL
 
-   ⚠️  Issue:
+   Issue:
    CPF brasileiro exposto no código
 
-   📋 Legal basis violated:
+   Legal basis violated:
    LGPD Art. 46 (Dados Sensíveis)
 
-   💰 Fine risk:
+   Fine risk:
    Até R$ 50 milhões
 
-   🔧 SUGGESTED FIX:
-   Remova o CPF hardcoded. Busque de banco de dados
-   criptografado ou use variável de ambiente para testes.
+   SUGGESTED FIX:
+   Remove hardcoded CPF. Retrieve from encrypted database
+   or use environment variable for tests.
 
-2. 🚨 User Logging
-   Line: 23
-   Severity: CRITICAL
+[... more violations ...]
 
-   ⚠️  Issue:
-   Possível exposição de dados pessoais em logs
+SUMMARY:
+   • 3 critical violations
+   • Risk: up to R$ 150 million
 
-   📋 Legal basis violated:
-   LGPD Art. 46 (Segurança)
-
-   💰 Fine risk:
-   Até R$ 50 milhões
-
-   🔧 SUGGESTED FIX:
-   Log apenas IDs não-sensíveis: console.log('User ID:', user.id)
-   ou use logger.sanitize(user)
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-📊 SUMMARY:
-   • 3 critical violations 🚨
-   • 0 high severity violations ⚠️
-   • 0 medium severity violations ⚡
-
-✅ NEXT STEPS:
+NEXT STEPS:
 1. Fix critical violations immediately
 2. Implement consent verification system
 3. Add privacy tests to CI/CD
 4. Document legal basis for data processing
 
-🛡️ OTTO.ai protected your users today.
+OTTO.ai protected your users today.
 ```
 
 ---
 
-## 🔧 How It Works
+## Fines You Can Avoid
 
-### As a Claude Code Skill
+### LGPD (Brazil)
+- Up to R$ 50 million per violation (Art. 52)
+- Public disclosure of violations
+- Data blocking/deletion orders
 
-OTTO.ai integrates seamlessly with Claude Code:
+### GDPR (Europe)
+- Up to €20M or 4% of annual global turnover (whichever is higher)
+- Applies per violation
+- Cumulative fines for multiple violations
 
-1. **Automatic invocation**: Claude invokes OTTO.ai when it detects code accessing personal data
-2. **Real-time feedback**: Get immediate warnings about privacy violations
-3. **Fix suggestions**: Receive corrected code that complies with regulations
-4. **Educational**: Learn privacy principles while coding
-
-### As a Hook (Optional)
-
-When hooks are enabled, OTTO.ai validates code automatically:
-
-- **Before edits**: Blocks privacy violations before they're saved
-- **Before commits**: Ensures clean commits
-- **CI/CD ready**: Can integrate into your build pipeline
+**Example:** 3 critical violations = potential R$ 150M (LGPD) or €60M (GDPR)
 
 ---
 
-## 📂 Project Structure
+## Before & After
+
+### Before OTTO.ai (Unsafe)
+
+```javascript
+const user = { cpf: "123.456.789-00" };
+console.log('User:', user);
+analytics.track('login', { email: user.email });
+const users = await db.query('SELECT * FROM users');
+```
+
+**Risk:** R$ 200 million in fines (4 violations × R$ 50M)
+
+### After OTTO.ai (Safe)
+
+```javascript
+const user = await getUserFromDB(userId);
+console.log('User ID:', user.id);
+
+if (user.hasConsent('analytics')) {
+  analytics.track('login', { userId: hash(user.id) });
+}
+
+const users = await db.query('SELECT id, name, email FROM users');
+```
+
+**Result:** LGPD/GDPR compliant, zero violation risk
+
+---
+
+## Project Structure
 
 ```
 otto/
 ├── install.sh                    # Interactive installer
 ├── README.md                     # This file
+├── QUICKSTART.md                 # 2-minute setup guide
+├── LICENSE                       # MIT License
+│
 ├── skills/
-│   ├── lgpd/                     # 🇧🇷 Brazilian regulation
+│   ├── lgpd/                     # Brazilian regulation
 │   │   ├── SKILL.md              # LGPD skill definition
 │   │   └── patterns.json         # LGPD violation patterns
-│   └── gdpr/                     # 🇪🇺 European regulation
+│   │
+│   └── gdpr/                     # European regulation
 │       ├── SKILL.md              # GDPR skill definition
 │       └── patterns.json         # GDPR violation patterns
-└── scripts/
-    └── scan_privacy.py           # Python scanner engine
+│
+├── scripts/
+│   └── scan_privacy.py           # Python scanner engine
+│
+└── examples/
+    ├── unsafe_code.js            # Code with violations
+    └── safe_code.js              # Compliant code
 ```
 
 ---
 
-## 🎨 Examples
-
-### ❌ Before OTTO.ai (Unsafe)
-
-```javascript
-// Hard-coded sensitive data
-const user = {
-  cpf: "123.456.789-00",
-  email: "user@example.com"
-};
-
-// Logging personal data
-console.log('User data:', user);
-
-// Tracking without consent
-analytics.track('login', {
-  email: user.email,
-  cpf: user.cpf
-});
-
-// Exposing all data
-const users = await db.query('SELECT * FROM users');
-```
-
-**Risk**: Up to R$ 200 million in LGPD fines (4 violations × R$ 50M)
-
-### ✅ After OTTO.ai (Safe)
-
-```javascript
-// No hardcoded data
-const user = await getUserFromDB(userId);
-
-// Safe logging (only IDs)
-console.log('User ID:', user.id);
-
-// Tracking with consent
-if (user.hasConsent('analytics')) {
-  analytics.track('login', {
-    userId: hashUserId(user.id) // Pseudonymized
-  });
-}
-
-// Data minimization
-const users = await db.query(
-  'SELECT id, name, email FROM users'
-);
-```
-
-**Result**: ✅ LGPD/GDPR compliant, zero violation risk
-
----
-
-## 🔒 Privacy & Security
+## Privacy & Security
 
 OTTO.ai itself respects your privacy:
 
-- ✅ **No data collection**: Runs entirely locally
-- ✅ **No network calls**: Patterns are local JSON files
-- ✅ **Open source**: Audit the code yourself
-- ✅ **No telemetry**: Your code never leaves your machine
+- **No data collection**: Runs entirely locally
+- **No network calls**: Patterns are local JSON files
+- **Open source**: Audit the code yourself
+- **No telemetry**: Your code never leaves your machine
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Especially:
 
-- 🆕 New violation patterns
-- 🌍 Support for other regulations (CCPA, PIPEDA, etc.)
-- 🐛 Bug fixes and improvements
-- 📖 Documentation updates
-- 🧪 Test cases
+- New violation patterns
+- Support for other regulations (CCPA, PIPEDA, etc.)
+- Bug fixes and improvements
+- Documentation updates
+- Test cases
 
 ### How to Contribute
 
@@ -322,7 +282,16 @@ Edit `skills/lgpd/patterns.json` or `skills/gdpr/patterns.json`:
 
 ---
 
-## 📚 Resources
+## Documentation
+
+- [README.md](README.md) - Complete guide (this file)
+- [QUICKSTART.md](QUICKSTART.md) - 2-minute setup
+- [METRICASBOSS.md](METRICASBOSS.md) - Organization publishing guide
+- [DEPLOY.md](DEPLOY.md) - Deployment instructions
+
+---
+
+## Resources
 
 ### LGPD (Brazil)
 - [Full LGPD text (Portuguese)](http://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm)
@@ -338,7 +307,7 @@ Edit `skills/lgpd/patterns.json` or `skills/gdpr/patterns.json`:
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### OTTO.ai not showing up in Claude Code
 
@@ -362,36 +331,28 @@ OTTO.ai uses regex patterns and may flag legitimate code. You can:
 
 ---
 
-## 📄 License
+## Support
 
-MIT License - Use and modify freely.
-
-See [LICENSE](LICENSE) file for details.
-
----
-
-## 💬 Support
-
-- 🐛 **Bug reports**: [GitHub Issues](https://github.com/metricasboss/otto/issues)
-- 💡 **Feature requests**: [GitHub Discussions](https://github.com/metricasboss/otto/discussions)
-- 📧 **Email**: your-email@example.com
+- Issues: [GitHub Issues](https://github.com/metricasboss/otto/issues)
+- Discussions: [GitHub Discussions](https://github.com/metricasboss/otto/discussions)
+- Community: [Métricas Boss](https://github.com/metricasboss)
 
 ---
 
-## 🙏 Acknowledgments
+## License
 
-- Named in honor of **Otto**, because protecting data is like protecting family
-- Inspired by the need for practical privacy compliance tools
-- Built for the Claude Code community
+MIT License - See [LICENSE](LICENSE) file for details.
 
 ---
 
-## ⭐ Star Us!
+## Acknowledgments
 
-If OTTO.ai helped you avoid a privacy violation, please star the repository!
+Named in honor of **Otto**, because protecting data should be as natural as protecting family.
+
+Built by the [Métricas Boss](https://github.com/metricasboss) community for developers who value privacy compliance.
 
 ---
 
-**🛡️ OTTO.ai** - Guarding your code like family
+**OTTO.ai** - Guarding your code like family
 
 *Making privacy compliance automatic, one line of code at a time.*
