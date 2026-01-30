@@ -44,8 +44,8 @@ gh repo create otto --public --source=. --remote=origin --description "🛡️ P
 After creating the repo on GitHub, run:
 
 ```bash
-# Add GitHub as remote (replace YOUR-USERNAME)
-git remote add origin https://github.com/YOUR-USERNAME/otto.git
+# Add GitHub as remote (replace metricasboss)
+git remote add origin https://github.com/metricasboss/otto.git
 
 # Verify remote
 git remote -v
@@ -64,7 +64,7 @@ git push -u origin main --tags
 
 ### Via Web:
 
-1. Go to: `https://github.com/YOUR-USERNAME/otto/releases/new`
+1. Go to: `https://github.com/metricasboss/otto/releases/new`
 2. Choose tag: `v1.0.0`
 3. Release title: `🛡️ OTTO.ai v1.0.0 - First Release`
 4. Description:
@@ -83,7 +83,7 @@ Automated privacy compliance for Claude Code with support for:
 ## ⚡ Quick Install
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/otto.git
+git clone https://github.com/metricasboss/otto.git
 cd otto
 ./install.sh
 ```
@@ -110,7 +110,7 @@ cd otto
 
 ## 🐛 Found a Bug?
 
-Report it: https://github.com/YOUR-USERNAME/otto/issues
+Report it: https://github.com/metricasboss/otto/issues
 
 ---
 
@@ -135,7 +135,7 @@ After publishing, update these links in README.md:
 
 ```bash
 # Replace placeholders
-sed -i '' 's|https://github.com/yourusername/otto|https://github.com/YOUR-USERNAME/otto|g' README.md
+sed -i '' 's|https://github.com/metricasboss/otto|https://github.com/metricasboss/otto|g' README.md
 sed -i '' 's|your-email@example.com|your-actual-email@domain.com|g' README.md
 
 # Commit changes
@@ -172,10 +172,10 @@ developer-tools
 Add badges to README.md:
 
 ```markdown
-![GitHub release](https://img.shields.io/github/v/release/YOUR-USERNAME/otto)
-![License](https://img.shields.io/github/license/YOUR-USERNAME/otto)
-![GitHub stars](https://img.shields.io/github/stars/YOUR-USERNAME/otto)
-![GitHub issues](https://img.shields.io/github/issues/YOUR-USERNAME/otto)
+![GitHub release](https://img.shields.io/github/v/release/metricasboss/otto)
+![License](https://img.shields.io/github/license/metricasboss/otto)
+![GitHub stars](https://img.shields.io/github/stars/metricasboss/otto)
+![GitHub issues](https://img.shields.io/github/issues/metricasboss/otto)
 ```
 
 ---
@@ -203,7 +203,7 @@ should be as natural as protecting those we love.
 
 Help me avoid R$ 50 million in fines! ⭐
 
-https://github.com/YOUR-USERNAME/otto
+https://github.com/metricasboss/otto
 
 #Privacy #LGPD #GDPR #OpenSource #DevTools
 ```
@@ -220,7 +220,7 @@ Automates LGPD 🇧🇷 + GDPR 🇪🇺 compliance for Claude Code
 
 Named after my son Otto ❤️
 
-⭐ https://github.com/YOUR-USERNAME/otto
+⭐ https://github.com/metricasboss/otto
 
 #Privacy #LGPD #GDPR #DevTools
 ```

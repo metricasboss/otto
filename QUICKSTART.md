@@ -8,7 +8,7 @@ Get OTTO.ai running in 2 minutes!
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/otto.git
+git clone https://github.com/metricasboss/otto.git
 cd otto
 
 # Run the installer
@@ -192,7 +192,7 @@ OTTO.ai uses regex patterns and may flag some safe code. This is normal!
 ## Next Steps
 
 1. ⭐ Star the repository if it helped you!
-2. 🐛 Report issues: [GitHub Issues](https://github.com/yourusername/otto/issues)
+2. 🐛 Report issues: [GitHub Issues](https://github.com/metricasboss/otto/issues)
 3. 🤝 Contribute new patterns
 4. 📖 Read full docs: [README.md](README.md)
 

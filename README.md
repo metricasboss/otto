@@ -2,6 +2,8 @@
 
 **Automated privacy compliance for Claude Code**
 
+> **By [Métricas Boss](https://github.com/metricasboss)** - A comunidade brasileira de Analytics & Privacy
+
 Named in honor of Otto - Protecting personal data like you protect family.
 
 ---
@@ -19,7 +21,7 @@ OTTO.ai automatically detects privacy violations in your code before they reach 
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/otto.git
+git clone https://github.com/metricasboss/otto.git
 cd otto
 
 # Run the installer
@@ -370,8 +372,8 @@ See [LICENSE](LICENSE) file for details.
 
 ## 💬 Support
 
-- 🐛 **Bug reports**: [GitHub Issues](https://github.com/yourusername/otto/issues)
-- 💡 **Feature requests**: [GitHub Discussions](https://github.com/yourusername/otto/discussions)
+- 🐛 **Bug reports**: [GitHub Issues](https://github.com/metricasboss/otto/issues)
+- 💡 **Feature requests**: [GitHub Discussions](https://github.com/metricasboss/otto/discussions)
 - 📧 **Email**: your-email@example.com
 
 ---
