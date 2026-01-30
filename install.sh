@@ -1,159 +1,92 @@
 #!/bin/bash
 
-# OTTO - Privacy Guardian Installer
-# Named in honor of Otto - Protecting data like family
+# OTTO installer
+# Privacy compliance for AI-assisted coding
+# https://github.com/metricasboss/otto
 
 set -e
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
-
-echo ""
-echo "🛡️  OTTO - Privacy Guardian Installer"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo ""
-echo "Nomeado em homenagem ao Otto"
-echo "Proteja seus dados como protegeria sua família"
-echo ""
-
-# Check if Claude Code is installed
-if ! command -v claude &> /dev/null; then
-    echo -e "${RED}❌ Claude Code não encontrado${NC}"
-    echo "Instale Claude Code primeiro: https://claude.ai/code"
-    exit 1
+# Parse arguments
+REGULATION="${1:-both}"
+NO_HOOKS=false
+if [[ "$*" == *"--no-hooks"* ]]; then
+  NO_HOOKS=true
 fi
 
-echo -e "${GREEN}✓${NC} Claude Code detectado"
-echo ""
-
-# Choose regulation
-echo "Escolha a regulamentação de privacidade:"
-echo ""
-echo "  ${BLUE}1)${NC} 🇧🇷 LGPD (Brasil - Lei 13.709/18)"
-echo "     Multas: até R$ 50 milhões por infração"
-echo ""
-echo "  ${BLUE}2)${NC} 🇪🇺 GDPR (Europa - EU 2016/679)"
-echo "     Multas: até €20M ou 4% do faturamento"
-echo ""
-echo "  ${BLUE}3)${NC} 🌍 Ambos (LGPD + GDPR)"
-echo "     Proteção máxima para mercados BR e EU"
-echo ""
-read -p "Opção [1-3]: " choice
-
-# Setup paths
-CLAUDE_DIR="$HOME/.claude"
-SKILLS_DIR="$CLAUDE_DIR/skills/otto"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+INSTALLED=0
 
-# Create directories
+echo "Installing OTTO..."
 echo ""
-echo -e "${BLUE}📁 Criando diretórios...${NC}"
-mkdir -p "$SKILLS_DIR/scripts"
-mkdir -p "$CLAUDE_DIR/hooks"
 
-# Copy base scripts
-echo -e "${BLUE}📋 Instalando scanner...${NC}"
-cp "$SCRIPT_DIR/scripts/scan_privacy.py" "$SKILLS_DIR/scripts/"
-chmod +x "$SKILLS_DIR/scripts/scan_privacy.py"
+# Function to install for an editor
+install_for_editor() {
+  local editor_name=$1
+  local skills_dir=$2
+  local supports_hooks=$3
 
-# Install based on choice
-REGULATION=""
-case $choice in
-  1)
-    echo -e "${BLUE}🇧🇷 Instalando OTTO com regras LGPD...${NC}"
-    cp "$SCRIPT_DIR/skills/lgpd/SKILL.md" "$SKILLS_DIR/"
-    cp "$SCRIPT_DIR/skills/lgpd/patterns.json" "$SKILLS_DIR/scripts/"
-    cp "$SCRIPT_DIR/scripts/lgpd_rules.py" "$SKILLS_DIR/scripts/" 2>/dev/null || true
-    REGULATION="LGPD"
-    echo "lgpd" > "$SKILLS_DIR/.regulation"
-    ;;
-  2)
-    echo -e "${BLUE}🇪🇺 Instalando OTTO com regras GDPR...${NC}"
-    cp "$SCRIPT_DIR/skills/gdpr/SKILL.md" "$SKILLS_DIR/"
-    cp "$SCRIPT_DIR/skills/gdpr/patterns.json" "$SKILLS_DIR/scripts/"
-    cp "$SCRIPT_DIR/scripts/gdpr_rules.py" "$SKILLS_DIR/scripts/" 2>/dev/null || true
-    REGULATION="GDPR"
-    echo "gdpr" > "$SKILLS_DIR/.regulation"
-    ;;
-  3)
-    echo -e "${BLUE}🌍 Instalando OTTO com LGPD + GDPR...${NC}"
-    # Use LGPD skill as base and merge patterns
-    cp "$SCRIPT_DIR/skills/lgpd/SKILL.md" "$SKILLS_DIR/"
+  mkdir -p "$skills_dir/scripts"
 
-    # Merge patterns
-    python3 -c "
+  # Copy scanner script
+  cp "$SCRIPT_DIR/scripts/scan_privacy.py" "$skills_dir/scripts/"
+  chmod +x "$skills_dir/scripts/scan_privacy.py"
+
+  # Copy skill and patterns based on regulation
+  case $REGULATION in
+    lgpd)
+      cp "$SCRIPT_DIR/skills/lgpd/SKILL.md" "$skills_dir/"
+      cp "$SCRIPT_DIR/skills/lgpd/patterns.json" "$skills_dir/scripts/"
+      echo "lgpd" > "$skills_dir/.regulation"
+      ;;
+    gdpr)
+      cp "$SCRIPT_DIR/skills/gdpr/SKILL.md" "$skills_dir/"
+      cp "$SCRIPT_DIR/skills/gdpr/patterns.json" "$skills_dir/scripts/"
+      echo "gdpr" > "$skills_dir/.regulation"
+      ;;
+    both)
+      cp "$SCRIPT_DIR/skills/lgpd/SKILL.md" "$skills_dir/"
+      # Merge patterns
+      python3 -c "
 import json
 with open('$SCRIPT_DIR/skills/lgpd/patterns.json') as f:
     lgpd = json.load(f)
 with open('$SCRIPT_DIR/skills/gdpr/patterns.json') as f:
     gdpr = json.load(f)
 merged = {**lgpd, **gdpr}
-with open('$SKILLS_DIR/scripts/patterns.json', 'w') as f:
+with open('$skills_dir/scripts/patterns.json', 'w') as f:
     json.dump(merged, f, indent=2)
 "
-    REGULATION="LGPD+GDPR"
-    echo "both" > "$SKILLS_DIR/.regulation"
-    ;;
-  *)
-    echo -e "${RED}❌ Opção inválida${NC}"
-    exit 1
-    ;;
-esac
+      echo "both" > "$skills_dir/.regulation"
+      ;;
+    *)
+      echo "Invalid regulation: $REGULATION"
+      echo "Use: lgpd, gdpr, or both"
+      exit 1
+      ;;
+  esac
 
-echo ""
-echo -e "${GREEN}✓${NC} Skills instaladas"
+  echo "✓ Installed for $editor_name"
 
-# Ask about automatic protection (hooks)
-echo ""
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "Deseja ativar proteção automática?"
-echo ""
-echo "Com hooks ativados, OTTO validará código automaticamente:"
-echo "  • Antes de cada commit"
-echo "  • Antes de editar arquivos"
-echo "  • Antes de fazer push"
-echo ""
-read -p "Ativar proteção automática? [y/n]: " enable_hooks
+  # Configure hooks only for Claude Code
+  if [ "$supports_hooks" = true ] && [ "$NO_HOOKS" = false ]; then
+    configure_claude_hooks "$skills_dir"
+  fi
+}
 
-if [[ "$enable_hooks" =~ ^[Yy]$ ]]; then
-    echo ""
-    echo -e "${BLUE}🔧 Configurando hooks...${NC}"
+# Configure hooks for Claude Code
+configure_claude_hooks() {
+  local skills_dir=$1
+  local settings_file="$HOME/.claude/settings.json"
 
-    # Check if settings.json exists
-    SETTINGS_FILE="$CLAUDE_DIR/settings.json"
+  if [ ! -f "$settings_file" ]; then
+    echo '{}' > "$settings_file"
+  fi
 
-    if [ ! -f "$SETTINGS_FILE" ]; then
-        echo '{}' > "$SETTINGS_FILE"
-    fi
-
-    # Create hooks configuration
-    HOOKS_CONFIG='{
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 '"$SKILLS_DIR"'/scripts/scan_privacy.py"
-          }
-        ]
-      }
-    ]
-  }
-}'
-
-    # Merge with existing settings
-    python3 -c "
+  python3 -c "
 import json
-import sys
 
-settings_file = '$SETTINGS_FILE'
-hooks_config = $HOOKS_CONFIG
+settings_file = '$settings_file'
+skills_dir = '$skills_dir'
 
 try:
     with open(settings_file, 'r') as f:
@@ -167,51 +100,93 @@ if 'hooks' not in settings:
 if 'PostToolUse' not in settings['hooks']:
     settings['hooks']['PostToolUse'] = []
 
-# Add OTTO hook if not already present
-otto_hook = hooks_config['hooks']['PostToolUse'][0]
+# OTTO hook configuration
+otto_hook = {
+    'matcher': 'Edit|Write',
+    'hooks': [{
+        'type': 'command',
+        'command': f'python3 {skills_dir}/scripts/scan_privacy.py'
+    }]
+}
+
+# Add if not present
 if otto_hook not in settings['hooks']['PostToolUse']:
     settings['hooks']['PostToolUse'].append(otto_hook)
 
 with open(settings_file, 'w') as f:
     json.dump(settings, f, indent=2)
-
-print('Hooks configurados com sucesso')
 "
+  echo "  ✓ Hooks configured (automatic protection enabled)"
+}
 
-    echo -e "${GREEN}✓${NC} Proteção automática ativada"
-    HOOKS_ENABLED=true
-else
-    echo -e "${YELLOW}⚠${NC}  Proteção automática desativada (apenas manual)"
-    HOOKS_ENABLED=false
+# Claude Code
+if [ -d "$HOME/.claude" ]; then
+  install_for_editor "Claude Code" "$HOME/.claude/skills/otto" true
+  INSTALLED=$((INSTALLED + 1))
 fi
 
-# Installation complete
+# Cursor
+if [ -d "$HOME/.cursor" ]; then
+  install_for_editor "Cursor" "$HOME/.cursor/skills/otto" false
+  echo "  ⚠ Hooks not supported - use /otto manually"
+  INSTALLED=$((INSTALLED + 1))
+fi
+
+# OpenCode
+if command -v opencode &> /dev/null || [ -d "$HOME/.config/opencode" ]; then
+  install_for_editor "OpenCode" "$HOME/.config/opencode/skills/otto" false
+  echo "  ⚠ Hooks not supported - use /otto manually"
+  INSTALLED=$((INSTALLED + 1))
+fi
+
+# Codex CLI
+if command -v codex &> /dev/null || [ -d "$HOME/.codex" ]; then
+  install_for_editor "Codex" "$HOME/.codex/skills/otto" false
+  echo "  ⚠ Hooks not supported - use /otto manually"
+  INSTALLED=$((INSTALLED + 1))
+fi
+
+# Antigravity (Gemini CLI)
+if [ -d "$HOME/.gemini" ]; then
+  install_for_editor "Antigravity" "$HOME/.gemini/skills/otto" false
+  echo "  ⚠ Hooks not supported - use /otto manually"
+  INSTALLED=$((INSTALLED + 1))
+fi
+
 echo ""
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+if [ $INSTALLED -eq 0 ]; then
+  echo "No supported tools detected."
+  echo ""
+  echo "Install one of these first:"
+  echo "  • Claude Code: https://claude.ai/code"
+  echo "  • Cursor: https://cursor.com"
+  echo "  • OpenCode: https://opencode.ai"
+  echo "  • Codex: https://openai.com/codex"
+  echo "  • Antigravity: https://antigravity.google"
+  exit 1
+fi
+
+# Summary
+REG_NAME="LGPD + GDPR"
+case $REGULATION in
+  lgpd) REG_NAME="LGPD (Brazil)" ;;
+  gdpr) REG_NAME="GDPR (Europe)" ;;
+esac
+
+echo "✅ OTTO installed successfully!"
 echo ""
-echo -e "${GREEN}✅ OTTO instalado com sucesso!${NC}"
+echo "Configuration:"
+echo "  • Regulation: $REG_NAME"
+echo "  • Editors: $INSTALLED tool(s)"
+if [ "$NO_HOOKS" = false ] && [ -d "$HOME/.claude" ]; then
+  echo "  • Automatic protection: Enabled (Claude Code only)"
+else
+  echo "  • Automatic protection: Disabled"
+fi
 echo ""
-echo "🛡️  Configuração:"
-echo "   Regulamentação: $REGULATION"
-echo "   Proteção automática: $([ "$HOOKS_ENABLED" = true ] && echo 'Ativa ✓' || echo 'Desativada')"
+echo "Usage:"
+echo "  /otto              - Analyze code in context"
+echo "  /otto scan <path>  - Scan specific directory"
 echo ""
-echo "📚 Comandos disponíveis no Claude Code:"
-echo "   ${BLUE}/otto${NC}              - Analisa código no contexto"
-echo "   ${BLUE}/otto scan <path>${NC}  - Escaneia diretório específico"
-echo ""
-echo "💡 Como usar:"
-echo "   • OTTO monitora automaticamente quando você escreve código"
-echo "   • Claude invocará quando detectar código com dados pessoais"
-echo "   • Você também pode invocar manualmente com /otto"
-echo ""
-echo "🔍 O que OTTO detecta:"
-echo "   ✓ CPF/RG/Documentos no código"
-echo "   ✓ Dados pessoais em logs"
-echo "   ✓ Tracking sem consentimento"
-echo "   ✓ Queries que expõem dados desnecessários"
-echo "   ✓ Dados sensíveis não criptografados"
-echo ""
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo ""
-echo -e "${GREEN}OTTO está protegendo seu código. 🛡️${NC}"
-echo ""
+echo "OTTO is protecting your code."

@@ -59,11 +59,23 @@ cd otto
 ./install.sh
 ```
 
-The installer will:
-1. Ask which regulation you want (LGPD, GDPR, or both)
-2. Install OTTO as a Claude Code skill
-3. Optionally configure automatic protection via hooks
-4. Set everything up in `~/.claude/skills/otto/`
+**Default:** Installs LGPD + GDPR for all detected editors.
+
+**Options:**
+```bash
+./install.sh lgpd        # Brazil only
+./install.sh gdpr        # Europe only
+./install.sh --no-hooks  # Skip automatic protection
+```
+
+**Supported editors:**
+- Claude Code (with automatic hooks)
+- Cursor (manual `/otto` only)
+- OpenCode (manual `/otto` only)
+- Codex (manual `/otto` only)
+- Antigravity (manual `/otto` only)
+
+**Note:** Automatic protection (hooks) only works on Claude Code. Other editors require manual invocation with `/otto`.
 
 ---
 
@@ -94,18 +106,25 @@ The installer will:
 
 ## How It Works
 
-### As a Claude Code Skill
+### Multi-Editor Support
 
-OTTO integrates seamlessly with Claude Code:
+OTTO works with multiple AI coding editors:
 
-1. **Automatic invocation**: Claude uses OTTO when it detects code accessing personal data
-2. **Real-time feedback**: Get immediate warnings about privacy violations
-3. **Fix suggestions**: Receive corrected code that complies with regulations
-4. **Educational**: Learn privacy principles while coding
+**Claude Code (Full Support):**
+- Automatic invocation when Claude detects personal data
+- Real-time feedback during coding
+- **Automatic hooks**: Validates before edits/commits
+- Fix suggestions with compliant code
 
-### As a Hook (Optional)
+**Other Editors (Cursor, OpenCode, Codex, Antigravity):**
+- Manual invocation only: `/otto` or `/otto scan <path>`
+- Same violation detection patterns
+- No automatic hooks (editor limitation)
+- Useful for manual code review
 
-When hooks are enabled, OTTO validates code automatically:
+### Automatic Protection (Claude Code Only)
+
+When hooks are enabled on Claude Code:
 
 - **Before edits**: Blocks privacy violations before they're saved
 - **Before commits**: Ensures clean commits
@@ -376,17 +395,26 @@ Edit `skills/lgpd/patterns.json` or `skills/gdpr/patterns.json`:
 
 ## Troubleshooting
 
-### OTTO not showing up in Claude Code
+### OTTO not showing up
 
+**Claude Code:**
 1. Check installation: `ls -la ~/.claude/skills/otto/`
 2. Restart Claude Code
 3. Run `/help` to see if `/otto` is listed
 
-### Hooks not working
+**Cursor:**
+1. Check installation: `ls -la ~/.cursor/skills/otto/`
+2. Restart Cursor
+3. Type `/otto` to invoke manually
+
+**Other editors:** Check respective skill directories
+
+### Hooks not working (Claude Code only)
 
 1. Check settings: `cat ~/.claude/settings.json`
 2. Verify Python is installed: `python3 --version`
 3. Make scanner executable: `chmod +x ~/.claude/skills/otto/scripts/scan_privacy.py`
+4. **Note:** Hooks only work on Claude Code, not other editors
 
 ### False positives
 
