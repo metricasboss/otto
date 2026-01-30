@@ -1,0 +1,19 @@
+# GitGuardian Configuration for OTTO.ai
+# This project intentionally contains fake secrets in example files
+
+version: 2
+
+paths-ignore:
+  - examples/**
+  - "**/*test*"
+  - "**/*example*"
+  - "**/*unsafe*"
+
+# Exclude specific patterns
+exclude:
+  - FAKE_API_KEY_EXAMPLE_DO_NOT_USE_123456
+  - admin123  # Example password
+
+# Document why we have these files
+# examples/unsafe_code.js: Demonstrates privacy violations that OTTO.ai detects
+# All "secrets" in this file are fake and for educational purposes only

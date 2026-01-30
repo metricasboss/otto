@@ -25,9 +25,10 @@ async function getUsers() {
 }
 
 // ❌ VIOLATION 5: Password in plaintext
+// gitleaks:allow - This is a FAKE example key for demonstration purposes only
 const config = {
-  admin_password: "admin123",
-  api_key: "FAKE_API_KEY_EXAMPLE_DO_NOT_USE_123456"
+  admin_password: "admin123", // pragma: allowlist secret
+  api_key: "FAKE_API_KEY_EXAMPLE_DO_NOT_USE_123456" // pragma: allowlist secret
 };
 
 // ❌ VIOLATION 6: Cookie without consent

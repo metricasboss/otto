@@ -1,0 +1,11 @@
+# GitLeaks Ignore File for OTTO.ai
+# These are intentionally insecure examples for demonstration
+
+# Ignore all example files - they contain fake secrets for testing
+examples/unsafe_code.js
+examples/*.js
+
+# Any test files with fake credentials
+**/*test*.js
+**/*example*.js
+**/*demo*.js
