@@ -27,7 +27,7 @@ async function getUsers() {
 // ❌ VIOLATION 5: Password in plaintext
 const config = {
   admin_password: "admin123",
-  api_key: "sk_live_1234567890abcdefghijklmnop"
+  api_key: "FAKE_API_KEY_EXAMPLE_DO_NOT_USE_123456"
 };
 
 // ❌ VIOLATION 6: Cookie without consent
