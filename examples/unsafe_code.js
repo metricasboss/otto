@@ -1,4 +1,4 @@
-// OTTO.ai Test File - Unsafe Code Examples
+// OTTO Test File - Unsafe Code Examples
 // This file contains intentional privacy violations for testing
 
 // ❌ VIOLATION 1: CPF hardcoded
@@ -58,4 +58,4 @@ async function syncUserData(user) {
   });
 }
 
-// Expected OTTO.ai output: 9+ critical violations detected
+// Expected OTTO output: 9+ critical violations detected

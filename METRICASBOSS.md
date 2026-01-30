@@ -1,6 +1,6 @@
-# 🎯 Publishing OTTO.ai to @metricasboss Organization
+# 🎯 Publishing OTTO to @metricasboss Organization
 
-Guide for publishing OTTO.ai under the Métricas Boss organization.
+Guide for publishing OTTO under the Métricas Boss organization.
 
 ---
 
@@ -8,7 +8,7 @@ Guide for publishing OTTO.ai under the Métricas Boss organization.
 
 **Métricas Boss** - Comunidade brasileira de Analytics & Data Privacy
 
-Publishing OTTO.ai under @metricasboss makes perfect sense:
+Publishing OTTO under @metricasboss makes perfect sense:
 - ✅ Privacy & Analytics community
 - ✅ Brazilian audience (LGPD focus)
 - ✅ Established brand
@@ -110,9 +110,9 @@ Website: `https://metricasboss.com.br` (if applicable)
 # Via GitHub CLI
 gh release create v1.0.0 \
   --repo metricasboss/otto \
-  --title "🛡️ OTTO.ai v1.0.0 - First Release" \
+  --title "🛡️ OTTO v1.0.0 - First Release" \
   --notes-file - <<'EOF'
-# 🛡️ OTTO.ai v1.0.0 - Privacy Guardian
+# 🛡️ OTTO v1.0.0 - Privacy Guardian
 
 **Named in honor of Otto** - Protecting personal data like you protect family.
 
@@ -175,11 +175,11 @@ EOF
 
 **Discord/Slack Message:**
 ```
-🛡️ NOVO PROJETO: OTTO.ai - Privacy Guardian!
+🛡️ NOVO PROJETO: OTTO - Privacy Guardian!
 
 Pessoal, temos uma novidade incrível!
 
-Criamos o OTTO.ai - um guardião automático de privacidade
+Criamos o OTTO - um guardião automático de privacidade
 que detecta violações LGPD e GDPR no seu código antes de
 ir pra produção.
 
@@ -200,17 +200,17 @@ Evite multas de até R$ 50 milhões 💰
 
 **LinkedIn (Métricas Boss Account):**
 ```
-🛡️ Métricas Boss lança OTTO.ai - Privacy Guardian
+🛡️ Métricas Boss lança OTTO - Privacy Guardian
 
 A comunidade Métricas Boss tem o prazer de apresentar
-OTTO.ai, nossa primeira ferramenta de compliance automático!
+OTTO, nossa primeira ferramenta de compliance automático!
 
 🎯 O PROBLEMA:
 LGPD e GDPR são complexas. Desenvolvedores cometem erros.
 Multas podem chegar a R$ 50 milhões por violação.
 
 💡 A SOLUÇÃO:
-OTTO.ai detecta violações de privacidade no código
+OTTO detecta violações de privacidade no código
 automaticamente, antes de chegarem em produção.
 
 ✅ Integração com Claude Code
@@ -234,7 +234,7 @@ https://github.com/metricasboss/otto
 
 **Twitter (Thread):**
 ```
-1/5 🛡️ Métricas Boss lança OTTO.ai
+1/5 🛡️ Métricas Boss lança OTTO
 
 Privacy Guardian que detecta violações LGPD 🇧🇷 e GDPR 🇪🇺
 no seu código ANTES de produção.
@@ -259,7 +259,7 @@ https://github.com/metricasboss/otto
 1. Instale: git clone + ./install.sh
 2. Escolha: LGPD ou GDPR
 3. Code normalmente
-4. OTTO.ai te avisa sobre violações
+4. OTTO te avisa sobre violações
 5. Corrige antes de commitar
 
 Zero fricção no workflow! 🚀
@@ -303,7 +303,7 @@ Create `docs/images/banner.png`:
 ```
 +------------------------------------------------+
 |                                                |
-|    🛡️ OTTO.ai - Privacy Guardian              |
+|    🛡️ OTTO - Privacy Guardian              |
 |                                                |
 |    By Métricas Boss                            |
 |    LGPD 🇧🇷 + GDPR 🇪🇺 Compliance             |
@@ -313,7 +313,7 @@ Create `docs/images/banner.png`:
 
 Add to README:
 ```markdown
-![OTTO.ai Banner](docs/images/banner.png)
+![OTTO Banner](docs/images/banner.png)
 ```
 
 ---
@@ -351,7 +351,7 @@ Want to contribute? Check our [Contributing Guide](CONTRIBUTING.md)
 
 ## 📊 Analytics (Optional)
 
-Track OTTO.ai adoption within Métricas Boss community:
+Track OTTO adoption within Métricas Boss community:
 
 ```bash
 # Add to install.sh (opt-in, privacy-respecting)
@@ -387,6 +387,6 @@ fi
 
 ---
 
-**🛡️ OTTO.ai - By Métricas Boss**
+**🛡️ OTTO - By Métricas Boss**
 
 *Named in honor of Otto - Protecting data like family*

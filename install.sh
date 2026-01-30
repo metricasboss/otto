@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# OTTO.ai - Privacy Guardian Installer
+# OTTO - Privacy Guardian Installer
 # Named in honor of Otto - Protecting data like family
 
 set -e
@@ -13,7 +13,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 echo ""
-echo "🛡️  OTTO.ai - Privacy Guardian Installer"
+echo "🛡️  OTTO - Privacy Guardian Installer"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 echo "Nomeado em homenagem ao Otto"
@@ -64,7 +64,7 @@ chmod +x "$SKILLS_DIR/scripts/scan_privacy.py"
 REGULATION=""
 case $choice in
   1)
-    echo -e "${BLUE}🇧🇷 Instalando OTTO.ai com regras LGPD...${NC}"
+    echo -e "${BLUE}🇧🇷 Instalando OTTO com regras LGPD...${NC}"
     cp "$SCRIPT_DIR/skills/lgpd/SKILL.md" "$SKILLS_DIR/"
     cp "$SCRIPT_DIR/skills/lgpd/patterns.json" "$SKILLS_DIR/scripts/"
     cp "$SCRIPT_DIR/scripts/lgpd_rules.py" "$SKILLS_DIR/scripts/" 2>/dev/null || true
@@ -72,7 +72,7 @@ case $choice in
     echo "lgpd" > "$SKILLS_DIR/.regulation"
     ;;
   2)
-    echo -e "${BLUE}🇪🇺 Instalando OTTO.ai com regras GDPR...${NC}"
+    echo -e "${BLUE}🇪🇺 Instalando OTTO com regras GDPR...${NC}"
     cp "$SCRIPT_DIR/skills/gdpr/SKILL.md" "$SKILLS_DIR/"
     cp "$SCRIPT_DIR/skills/gdpr/patterns.json" "$SKILLS_DIR/scripts/"
     cp "$SCRIPT_DIR/scripts/gdpr_rules.py" "$SKILLS_DIR/scripts/" 2>/dev/null || true
@@ -80,7 +80,7 @@ case $choice in
     echo "gdpr" > "$SKILLS_DIR/.regulation"
     ;;
   3)
-    echo -e "${BLUE}🌍 Instalando OTTO.ai com LGPD + GDPR...${NC}"
+    echo -e "${BLUE}🌍 Instalando OTTO com LGPD + GDPR...${NC}"
     # Use LGPD skill as base and merge patterns
     cp "$SCRIPT_DIR/skills/lgpd/SKILL.md" "$SKILLS_DIR/"
 
@@ -112,7 +112,7 @@ echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Deseja ativar proteção automática?"
 echo ""
-echo "Com hooks ativados, OTTO.ai validará código automaticamente:"
+echo "Com hooks ativados, OTTO validará código automaticamente:"
 echo "  • Antes de cada commit"
 echo "  • Antes de editar arquivos"
 echo "  • Antes de fazer push"
@@ -167,7 +167,7 @@ if 'hooks' not in settings:
 if 'PostToolUse' not in settings['hooks']:
     settings['hooks']['PostToolUse'] = []
 
-# Add OTTO.ai hook if not already present
+# Add OTTO hook if not already present
 otto_hook = hooks_config['hooks']['PostToolUse'][0]
 if otto_hook not in settings['hooks']['PostToolUse']:
     settings['hooks']['PostToolUse'].append(otto_hook)
@@ -189,7 +189,7 @@ fi
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo -e "${GREEN}✅ OTTO.ai instalado com sucesso!${NC}"
+echo -e "${GREEN}✅ OTTO instalado com sucesso!${NC}"
 echo ""
 echo "🛡️  Configuração:"
 echo "   Regulamentação: $REGULATION"
@@ -200,11 +200,11 @@ echo "   ${BLUE}/otto${NC}              - Analisa código no contexto"
 echo "   ${BLUE}/otto scan <path>${NC}  - Escaneia diretório específico"
 echo ""
 echo "💡 Como usar:"
-echo "   • OTTO.ai monitora automaticamente quando você escreve código"
+echo "   • OTTO monitora automaticamente quando você escreve código"
 echo "   • Claude invocará quando detectar código com dados pessoais"
 echo "   • Você também pode invocar manualmente com /otto"
 echo ""
-echo "🔍 O que OTTO.ai detecta:"
+echo "🔍 O que OTTO detecta:"
 echo "   ✓ CPF/RG/Documentos no código"
 echo "   ✓ Dados pessoais em logs"
 echo "   ✓ Tracking sem consentimento"
@@ -213,5 +213,5 @@ echo "   ✓ Dados sensíveis não criptografados"
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo -e "${GREEN}OTTO.ai está protegendo seu código. 🛡️${NC}"
+echo -e "${GREEN}OTTO está protegendo seu código. 🛡️${NC}"
 echo ""

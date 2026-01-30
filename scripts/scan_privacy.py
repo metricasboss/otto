@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-OTTO.ai - Privacy Scanner
+OTTO - Privacy Scanner
 Named in honor of Otto - Protecting data like family
 
 Supports:
@@ -124,12 +124,12 @@ class PrivacyScanner:
 
         if not violations:
             return f"""
-🛡️ OTTO.ai - {regulation_name} Analysis
+🛡️ OTTO - {regulation_name} Analysis
 
 ✅ No violations detected.
    Code complies with {regulation_name} requirements.
 
-🛡️ OTTO.ai protected your users today.
+🛡️ OTTO protected your users today.
 """
 
         critical_count = sum(1 for v in violations if v['severity'] == 'critical')
@@ -137,7 +137,7 @@ class PrivacyScanner:
         medium_count = sum(1 for v in violations if v['severity'] == 'medium')
 
         output = f"""
-🛡️ OTTO.ai - {regulation_name} Privacy Analysis
+🛡️ OTTO - {regulation_name} Privacy Analysis
 
 ❌ VIOLATIONS FOUND: {len(violations)}
 
@@ -179,7 +179,7 @@ class PrivacyScanner:
 3. Add privacy tests to CI/CD
 4. Document legal basis for data processing
 
-🛡️ OTTO.ai protected your users today.
+🛡️ OTTO protected your users today.
 """
 
         return output

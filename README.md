@@ -1,4 +1,4 @@
-# OTTO.ai - Privacy Guardian
+# OTTO - Privacy Guardian
 
 **Automated privacy compliance for AI-assisted coding**
 
@@ -17,13 +17,13 @@ AI assistants like Claude, Copilot, and ChatGPT are transforming how we code. Bu
 4. **Violation goes to production**
 5. **Fine: up to R$ 50 million**
 
-**OTTO.ai solves this.**
+**OTTO solves this.**
 
 It sits between the AI and your commits, catching privacy violations before they become fines.
 
 ## Overview
 
-OTTO.ai automatically validates AI-generated code against LGPD and GDPR, blocking violations before they reach production.
+OTTO automatically validates AI-generated code against LGPD and GDPR, blocking violations before they reach production.
 
 **Why you need this:**
 - AI assistants generate code fast, but don't validate compliance
@@ -61,13 +61,13 @@ cd otto
 
 The installer will:
 1. Ask which regulation you want (LGPD, GDPR, or both)
-2. Install OTTO.ai as a Claude Code skill
+2. Install OTTO as a Claude Code skill
 3. Optionally configure automatic protection via hooks
 4. Set everything up in `~/.claude/skills/otto/`
 
 ---
 
-## What OTTO.ai Detects
+## What OTTO Detects
 
 ### LGPD (Brazil)
 - CPF/RG/CNPJ hardcoded in code
@@ -96,16 +96,16 @@ The installer will:
 
 ### As a Claude Code Skill
 
-OTTO.ai integrates seamlessly with Claude Code:
+OTTO integrates seamlessly with Claude Code:
 
-1. **Automatic invocation**: Claude uses OTTO.ai when it detects code accessing personal data
+1. **Automatic invocation**: Claude uses OTTO when it detects code accessing personal data
 2. **Real-time feedback**: Get immediate warnings about privacy violations
 3. **Fix suggestions**: Receive corrected code that complies with regulations
 4. **Educational**: Learn privacy principles while coding
 
 ### As a Hook (Optional)
 
-When hooks are enabled, OTTO.ai validates code automatically:
+When hooks are enabled, OTTO validates code automatically:
 
 - **Before edits**: Blocks privacy violations before they're saved
 - **Before commits**: Ensures clean commits
@@ -117,19 +117,19 @@ When hooks are enabled, OTTO.ai validates code automatically:
 
 ### Automatic Mode (Recommended)
 
-Once installed with hooks enabled, OTTO.ai works automatically:
+Once installed with hooks enabled, OTTO works automatically:
 
 ```javascript
 // You write code with privacy issues
 console.log('User:', user); // Exposes PII
 
-// OTTO.ai blocks and suggests fix:
+// OTTO blocks and suggests fix:
 // Use: console.log('User ID:', user.id)
 ```
 
 ### Manual Mode
 
-Invoke OTTO.ai directly in Claude Code:
+Invoke OTTO directly in Claude Code:
 
 ```bash
 # Analyze current context
@@ -155,7 +155,7 @@ python3 ~/.claude/skills/otto/scripts/scan_privacy.py myfile.js
 ## Example Output
 
 ```
-OTTO.ai - LGPD Privacy Analysis
+OTTO - LGPD Privacy Analysis
 
 VIOLATIONS FOUND: 3
 
@@ -190,7 +190,7 @@ NEXT STEPS:
 3. Add privacy tests to CI/CD
 4. Document legal basis for data processing
 
-OTTO.ai protected your users today.
+OTTO protected your users today.
 ```
 
 ---
@@ -234,10 +234,10 @@ analytics.track('login', {
 - ❌ AI doesn't know about data minimization
 - 💰 **Fine: R$ 150 million** (3 violations)
 
-### What OTTO.ai Catches
+### What OTTO Catches
 
 ```
-OTTO.ai - LGPD Analysis
+OTTO - LGPD Analysis
 
 ❌ 3 VIOLATIONS FOUND
 
@@ -257,7 +257,7 @@ OTTO.ai - LGPD Analysis
 ### What You Commit (Safe)
 
 ```javascript
-// OTTO.ai auto-corrected:
+// OTTO auto-corrected:
 
 const user = await getUser(userId);
 console.log('User ID:', user.id); // ✅ No PII
@@ -303,7 +303,7 @@ otto/
 
 ## Privacy & Security
 
-OTTO.ai itself respects your privacy:
+OTTO itself respects your privacy:
 
 - **No data collection**: Runs entirely locally
 - **No network calls**: Patterns are local JSON files
@@ -376,7 +376,7 @@ Edit `skills/lgpd/patterns.json` or `skills/gdpr/patterns.json`:
 
 ## Troubleshooting
 
-### OTTO.ai not showing up in Claude Code
+### OTTO not showing up in Claude Code
 
 1. Check installation: `ls -la ~/.claude/skills/otto/`
 2. Restart Claude Code
@@ -390,7 +390,7 @@ Edit `skills/lgpd/patterns.json` or `skills/gdpr/patterns.json`:
 
 ### False positives
 
-OTTO.ai uses regex patterns and may flag legitimate code. You can:
+OTTO uses regex patterns and may flag legitimate code. You can:
 
 1. Add context in comments explaining why code is safe
 2. Adjust patterns in `~/.claude/skills/otto/scripts/patterns.json`
@@ -420,6 +420,6 @@ Built by the [Métricas Boss](https://github.com/metricasboss) community for dev
 
 ---
 
-**OTTO.ai** - Guarding your code like family
+**OTTO** - Guarding your code like family
 
 *Making privacy compliance automatic, one line of code at a time.*

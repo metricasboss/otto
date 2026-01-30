@@ -1,6 +1,6 @@
-# 🚀 OTTO.ai - Deploy & Distribution Guide
+# 🚀 OTTO - Deploy & Distribution Guide
 
-Your OTTO.ai repository is ready! Follow these steps to publish.
+Your OTTO repository is ready! Follow these steps to publish.
 
 ---
 
@@ -66,11 +66,11 @@ git push -u origin main --tags
 
 1. Go to: `https://github.com/metricasboss/otto/releases/new`
 2. Choose tag: `v1.0.0`
-3. Release title: `🛡️ OTTO.ai v1.0.0 - First Release`
+3. Release title: `🛡️ OTTO v1.0.0 - First Release`
 4. Description:
 
 ```markdown
-# 🛡️ OTTO.ai v1.0.0 - Privacy Guardian
+# 🛡️ OTTO v1.0.0 - Privacy Guardian
 
 **Named in honor of Otto** - Protecting personal data like you protect family.
 
@@ -123,7 +123,7 @@ Made with ❤️ for privacy compliance automation
 
 ```bash
 gh release create v1.0.0 \
-  --title "🛡️ OTTO.ai v1.0.0 - First Release" \
+  --title "🛡️ OTTO v1.0.0 - First Release" \
   --notes "Automated privacy compliance for Claude Code supporting LGPD 🇧🇷 and GDPR 🇪🇺"
 ```
 
@@ -186,11 +186,11 @@ Add badges to README.md:
 
 **LinkedIn:**
 ```
-🛡️ Launching OTTO.ai - Privacy Guardian for Developers
+🛡️ Launching OTTO - Privacy Guardian for Developers
 
 Tired of privacy compliance being manual and error-prone?
 
-OTTO.ai automatically detects LGPD 🇧🇷 and GDPR 🇪🇺 violations
+OTTO automatically detects LGPD 🇧🇷 and GDPR 🇪🇺 violations
 in your code BEFORE they reach production.
 
 Named in honor of my son Otto - because protecting data
@@ -210,7 +210,7 @@ https://github.com/metricasboss/otto
 
 **Twitter:**
 ```
-🛡️ Launching OTTO.ai - Privacy Guardian
+🛡️ Launching OTTO - Privacy Guardian
 
 Automates LGPD 🇧🇷 + GDPR 🇪🇺 compliance for Claude Code
 

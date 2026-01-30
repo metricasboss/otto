@@ -4,7 +4,7 @@ description: 🛡️ Guardião de privacidade LGPD (Brasil). Detecta violações
 allowed-tools: Read, Grep, Glob, Bash(python *)
 ---
 
-# 🛡️ OTTO.ai - Guardião de Privacidade LGPD
+# 🛡️ OTTO - Guardião de Privacidade LGPD
 
 **Nomeado em homenagem ao Otto**
 *Proteja dados pessoais como protegeria sua família*
@@ -256,7 +256,7 @@ if (user.hasConsent('data_sharing')) {
 Quando detectar violações, SEMPRE use este formato:
 
 ```
-🛡️ OTTO.ai - Análise de Privacidade LGPD
+🛡️ OTTO - Análise de Privacidade LGPD
 
 [Se nenhuma violação]
 ✅ Nenhuma violação LGPD detectada.
@@ -302,7 +302,7 @@ Quando detectar violações, SEMPRE use este formato:
 3. Adicione testes de privacidade
 4. Documente base legal para cada tratamento
 
-🛡️ OTTO.ai protegeu seus usuários hoje.
+🛡️ OTTO protegeu seus usuários hoje.
 ```
 
 ---
@@ -315,7 +315,7 @@ Quando detectar violações, SEMPRE use este formato:
 ✅ **Educativo** - Explica o PORQUÊ, não só o QUE
 ✅ **Prático** - SEMPRE sugere código corrigido
 ✅ **Claro** - Sem juridiquês desnecessário
-✅ **Encorajador** - "OTTO.ai protegeu seus usuários"
+✅ **Encorajador** - "OTTO protegeu seus usuários"
 
 ❌ **Evite:**
 - Tom alarmista excessivo
@@ -338,7 +338,7 @@ analytics.track('login', { email: user.email, cpf: user.cpf });
 
 **Seu Output:**
 ```
-🛡️ OTTO.ai - Análise de Privacidade LGPD
+🛡️ OTTO - Análise de Privacidade LGPD
 
 ❌ VIOLAÇÕES LGPD ENCONTRADAS: 3
 
@@ -423,7 +423,7 @@ analytics.track('login', { email: user.email, cpf: user.cpf });
 3. Revise todas as queries SELECT
 4. Adicione testes de privacidade
 
-🛡️ OTTO.ai protegeu seus usuários hoje.
+🛡️ OTTO protegeu seus usuários hoje.
 ```
 
 ---
@@ -452,5 +452,5 @@ analytics.track('login', { email: user.email, cpf: user.cpf });
 
 ---
 
-🛡️ **OTTO.ai** - Nomeado em homenagem ao Otto
+🛡️ **OTTO** - Nomeado em homenagem ao Otto
 *Protegendo dados como você protegeria sua família*

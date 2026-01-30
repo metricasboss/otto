@@ -1,4 +1,4 @@
-# 🧪 OTTO.ai Example Files
+# 🧪 OTTO Example Files
 
 ## ⚠️ SECURITY NOTICE
 
@@ -6,7 +6,7 @@
 
 All API keys, passwords, and sensitive data in this directory are:
 - ✅ **FAKE** - Not real credentials
-- ✅ **For testing only** - Demonstrate what OTTO.ai detects
+- ✅ **For testing only** - Demonstrate what OTTO detects
 - ✅ **Safe** - No actual secrets are exposed
 
 ## Files
@@ -18,7 +18,7 @@ Contains **intentionally bad code** that violates LGPD/GDPR:
 - Fake personal data (CPF)
 - Examples of what **NOT** to do
 
-**Purpose**: Show what OTTO.ai detects and prevents.
+**Purpose**: Show what OTTO detects and prevents.
 
 ### `safe_code.js`
 Contains **secure, compliant code**:
@@ -48,4 +48,4 @@ When adding new example violations:
 
 ---
 
-**🛡️ OTTO.ai** - These examples help developers learn privacy compliance.
+**🛡️ OTTO** - These examples help developers learn privacy compliance.

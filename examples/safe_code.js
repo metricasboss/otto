@@ -1,4 +1,4 @@
-// OTTO.ai Test File - Safe Code Examples
+// OTTO Test File - Safe Code Examples
 // This file shows LGPD/GDPR compliant code
 
 // ✅ SAFE 1: No hardcoded sensitive data
@@ -64,4 +64,4 @@ async function syncUserData(user) {
   }
 }
 
-// Expected OTTO.ai output: ✅ No violations detected
+// Expected OTTO output: ✅ No violations detected

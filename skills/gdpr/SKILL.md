@@ -4,7 +4,7 @@ description: 🛡️ GDPR Privacy Guardian (Europe). Detects violations of EU 20
 allowed-tools: Read, Grep, Glob, Bash(python *)
 ---
 
-# 🛡️ OTTO.ai - GDPR Privacy Guardian
+# 🛡️ OTTO - GDPR Privacy Guardian
 
 **Named in honor of Otto**
 *Protecting personal data like you protect family*
@@ -254,7 +254,7 @@ if (user.hasConsent('data_sharing')) {
 When detecting violations, ALWAYS use this format:
 
 ```
-🛡️ OTTO.ai - GDPR Privacy Analysis
+🛡️ OTTO - GDPR Privacy Analysis
 
 [If no violations]
 ✅ No GDPR violations detected.
@@ -300,7 +300,7 @@ When detecting violations, ALWAYS use this format:
 3. Add privacy tests
 4. Document legal basis for each processing
 
-🛡️ OTTO.ai protected your users today.
+🛡️ OTTO protected your users today.
 ```
 
 ---
@@ -313,7 +313,7 @@ When detecting violations, ALWAYS use this format:
 ✅ **Educational** - Explain WHY, not just WHAT
 ✅ **Practical** - ALWAYS suggest corrected code
 ✅ **Clear** - No unnecessary legal jargon
-✅ **Encouraging** - "OTTO.ai protected your users"
+✅ **Encouraging** - "OTTO protected your users"
 
 ❌ **Avoid:**
 - Excessively alarmist tone
@@ -336,7 +336,7 @@ analytics.track('login', { email: user.email, ssn: user.ssn });
 
 **Your Output:**
 ```
-🛡️ OTTO.ai - GDPR Privacy Analysis
+🛡️ OTTO - GDPR Privacy Analysis
 
 ❌ GDPR VIOLATIONS FOUND: 3
 
@@ -421,7 +421,7 @@ analytics.track('login', { email: user.email, ssn: user.ssn });
 3. Review all SELECT queries
 4. Add privacy tests
 
-🛡️ OTTO.ai protected your users today.
+🛡️ OTTO protected your users today.
 ```
 
 ---
@@ -450,5 +450,5 @@ analytics.track('login', { email: user.email, ssn: user.ssn });
 
 ---
 
-🛡️ **OTTO.ai** - Named in honor of Otto
+🛡️ **OTTO** - Named in honor of Otto
 *Protecting data like you protect family*

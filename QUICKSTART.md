@@ -1,6 +1,6 @@
-# 🚀 OTTO.ai - Quick Start Guide
+# 🚀 OTTO - Quick Start Guide
 
-Get OTTO.ai running in 2 minutes!
+Get OTTO running in 2 minutes!
 
 ---
 
@@ -45,14 +45,14 @@ python3 scripts/scan_privacy.py examples/unsafe_code.js
 # Start Claude Code
 claude
 
-# In the REPL, invoke OTTO.ai:
+# In the REPL, invoke OTTO:
 /otto
 
 # Or type:
 "Check this code for privacy issues"
 ```
 
-Claude will automatically use OTTO.ai when relevant!
+Claude will automatically use OTTO when relevant!
 
 ---
 
@@ -60,14 +60,14 @@ Claude will automatically use OTTO.ai when relevant!
 
 ### Automatic Mode (if hooks enabled)
 
-Just code normally in Claude Code. OTTO.ai watches and alerts automatically:
+Just code normally in Claude Code. OTTO watches and alerts automatically:
 
 ```javascript
 // You write:
 console.log('User:', user);
 
-// OTTO.ai blocks:
-🛡️ OTTO.ai detected privacy violation
+// OTTO blocks:
+🛡️ OTTO detected privacy violation
 Use: console.log('User ID:', user.id)
 ```
 
@@ -109,7 +109,7 @@ Use: console.log('User ID:', user.id)
 ## Common Commands
 
 ```bash
-# Check OTTO.ai installation
+# Check OTTO installation
 ls -la ~/.claude/skills/otto/
 
 # View configuration
@@ -129,7 +129,7 @@ echo "both" > .regulation  # Use both
 
 ## Example: Before & After
 
-### ❌ Before OTTO.ai
+### ❌ Before OTTO
 
 ```javascript
 const user = { cpf: "123.456.789-00" };
@@ -139,7 +139,7 @@ analytics.track('login', { email: user.email });
 
 **Risk:** R$ 150 million in fines (3 violations × R$ 50M)
 
-### ✅ After OTTO.ai
+### ✅ After OTTO
 
 ```javascript
 const user = await getUserFromDB(userId);
@@ -155,7 +155,7 @@ if (user.hasConsent('analytics')) {
 
 ## Troubleshooting
 
-### OTTO.ai not appearing in Claude Code
+### OTTO not appearing in Claude Code
 
 ```bash
 # Check installation
@@ -180,7 +180,7 @@ cat ~/.claude/settings.json
 
 ### False positives
 
-OTTO.ai uses regex patterns and may flag some safe code. This is normal!
+OTTO uses regex patterns and may flag some safe code. This is normal!
 
 **Options:**
 1. Review and ignore if code is actually safe
@@ -198,6 +198,6 @@ OTTO.ai uses regex patterns and may flag some safe code. This is normal!
 
 ---
 
-**🛡️ OTTO.ai is protecting your code!**
+**🛡️ OTTO is protecting your code!**
 
 *Named in honor of Otto - Protecting data like family*
