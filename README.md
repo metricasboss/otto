@@ -6,6 +6,14 @@
 
 ---
 
+## Demo
+
+> **Recording demo GIF...** See `demo/` folder for instructions to record.
+>
+> Quick preview: Run `./demo/demo_script.sh` to see OTTO in action
+
+---
+
 ## The Problem
 
 AI assistants like Claude, Copilot, and ChatGPT are transforming how we code. But they don't know LGPD or GDPR.
