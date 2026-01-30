@@ -1,18 +1,53 @@
 # OTTO.ai - Privacy Guardian
 
-**Automated privacy compliance for Claude Code**
+**Automated privacy compliance for AI-assisted coding**
 
 > By [Métricas Boss](https://github.com/metricasboss) - A comunidade brasileira de Analytics & Privacy
 
 ---
 
+## The Problem
+
+AI assistants like Claude, Copilot, and ChatGPT are transforming how we code. But they don't know LGPD or GDPR.
+
+**Common scenario:**
+1. Developer asks Claude: *"Add user tracking to this page"*
+2. Claude generates code that collects CPF, email, phone
+3. Developer commits without reviewing
+4. **Violation goes to production**
+5. **Fine: up to R$ 50 million**
+
+**OTTO.ai solves this.**
+
+It sits between the AI and your commits, catching privacy violations before they become fines.
+
 ## Overview
 
-OTTO.ai automatically detects privacy violations in your code before they reach production, helping you avoid fines up to **R$ 50 million (LGPD)** or **€20M / 4% turnover (GDPR)**.
+OTTO.ai automatically validates AI-generated code against LGPD and GDPR, blocking violations before they reach production.
+
+**Why you need this:**
+- AI assistants generate code fast, but don't validate compliance
+- Developers trust AI output without reviewing privacy implications
+- Manual code review is slow and misses subtle violations
+- LGPD/GDPR fines start at R$ 50M / €20M per violation
 
 **Supported Regulations:**
 - 🇧🇷 LGPD (Lei 13.709/18) - Brazil
 - 🇪🇺 GDPR (EU 2016/679) - Europe
+
+---
+
+## Who This Is For
+
+**Developers using AI assistants:**
+- Claude Code, GitHub Copilot, ChatGPT, Cursor, etc.
+- Writing code fast without privacy expertise
+- Need compliance without slowing down
+
+**Teams shipping to Brazil/Europe:**
+- Startups moving fast
+- Companies handling user data
+- Anyone who can't afford a R$ 50M mistake
 
 ---
 
@@ -176,33 +211,65 @@ OTTO.ai protected your users today.
 
 ---
 
-## Before & After
+## Real-World Example: AI-Generated Code
 
-### Before OTTO.ai (Unsafe)
+### What AI Generates (Unsafe)
 
 ```javascript
-const user = { cpf: "123.456.789-00" };
-console.log('User:', user);
-analytics.track('login', { email: user.email });
-const users = await db.query('SELECT * FROM users');
+// Developer prompt: "Add analytics tracking for user login"
+// AI generates:
+
+const user = await getUser(userId);
+console.log('User logged in:', user); // ❌ Logs PII
+analytics.track('login', {
+  email: user.email,        // ❌ No consent check
+  cpf: user.cpf,           // ❌ Sensitive data
+  location: user.address   // ❌ Unnecessary data
+});
 ```
 
-**Risk:** R$ 200 million in fines (4 violations × R$ 50M)
+**What happens:**
+- ❌ AI doesn't know LGPD requires consent
+- ❌ AI doesn't know CPF is sensitive data
+- ❌ AI doesn't know about data minimization
+- 💰 **Fine: R$ 150 million** (3 violations)
 
-### After OTTO.ai (Safe)
+### What OTTO.ai Catches
+
+```
+OTTO.ai - LGPD Analysis
+
+❌ 3 VIOLATIONS FOUND
+
+1. Personal data in logs (Line 3)
+   LGPD Art. 46 - Fine: R$ 50M
+   Fix: console.log('User ID:', user.id)
+
+2. Tracking without consent (Line 4)
+   LGPD Art. 7º - Fine: R$ 50M
+   Fix: if (user.hasConsent('analytics')) { ... }
+
+3. Unnecessary data collection (Line 6)
+   LGPD Art. 6º III - Fine: R$ 50M
+   Fix: Remove 'location' field
+```
+
+### What You Commit (Safe)
 
 ```javascript
-const user = await getUserFromDB(userId);
-console.log('User ID:', user.id);
+// OTTO.ai auto-corrected:
 
-if (user.hasConsent('analytics')) {
-  analytics.track('login', { userId: hash(user.id) });
+const user = await getUser(userId);
+console.log('User ID:', user.id); // ✅ No PII
+
+if (user.hasConsent('analytics')) { // ✅ Consent check
+  analytics.track('login', {
+    userId: hash(user.id)  // ✅ Anonymized, no sensitive data
+  });
 }
-
-const users = await db.query('SELECT id, name, email FROM users');
 ```
 
-**Result:** LGPD/GDPR compliant, zero violation risk
+**Result:** ✅ LGPD compliant, zero fines
 
 ---
 
