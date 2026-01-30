@@ -6,14 +6,6 @@
 
 ---
 
-## Demo
-
-![OTTO Demo](docs/otto-demo.gif)
-
-*Watch OTTO catch LGPD violations in real-time and save R$ 100 million in fines*
-
----
-
 ## The Problem
 
 AI assistants like Claude, Copilot, and ChatGPT are transforming how we code. But they don't know LGPD or GDPR.
