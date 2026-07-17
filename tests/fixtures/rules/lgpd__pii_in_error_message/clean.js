@@ -1,1 +1,1 @@
-throw new Error('User not found: ' + id);
+throw new Error(`User ${user.id} not found`);

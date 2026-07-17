@@ -1,1 +1,1 @@
-logger.info('request received');
+logger.info(anonymizeIp(req.ip));

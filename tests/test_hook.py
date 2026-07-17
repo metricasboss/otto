@@ -73,3 +73,14 @@ def test_invalid_json_exits_zero():
 def test_empty_content_exits_zero():
     code, out = run_hook({"tool_name": "Write", "tool_input": {"file_path": "a.js"}})
     assert code == 0 and out is None
+
+
+def test_innocent_health_object_not_denied():
+    code, out = run_hook({
+        "tool_name": "Write",
+        "tool_input": {"file_path": "src/app.js",
+                       "content": "const health = { status: 'ok' };\n"},
+    })
+    assert code == 0
+    if out is not None:
+        assert "hookSpecificOutput" not in out

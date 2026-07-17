@@ -10,7 +10,7 @@
   },
   "national_id_eu": {
     "regex": "\\b[A-Z]{2}\\d{6,9}[A-Z]?\\b",
-    "severity": "critical",
+    "severity": "high",
     "article": "GDPR Art. 32 (Security)",
     "message": "Possible EU national ID number exposed",
     "fix": "Remove hardcoded ID. Fetch from secure source.",
@@ -45,7 +45,7 @@
   },
   "user_logging": {
     "regex": "(console\\.log|logger\\.(info|debug|error|warn))\\((?![^)]*\\buser\\.id\\b)[^)]*\\buser\\b[^)]*\\)",
-    "severity": "critical",
+    "severity": "high",
     "article": "GDPR Art. 32 (Security)",
     "message": "Possible personal data exposure in logs",
     "fix": "Log only non-sensitive IDs: console.log('User ID:', user.id) or use logger.sanitize(user)",
@@ -127,13 +127,13 @@
   },
   "health_data_exposure": {
     "regex": "(medical|health|diagnosis|prescription|patient)\\s*[:=]",
-    "severity": "critical",
+    "severity": "high",
     "article": "GDPR Art. 9 (Special Categories)",
     "message": "Possible health data exposure (special category requiring explicit consent)",
     "fix": "Health data requires explicit consent and enhanced security measures",
     "fine": "Up to €20M or 4% turnover",
     "category": "special_category",
-    "negative_context": ["healthcheck", "health_check", "/health"]
+    "negative_context": ["healthcheck", "health_check", "/health", "status"]
   },
   "biometric_data": {
     "regex": "(fingerprint|facial[_-]?recognition|iris[_-]?scan|biometric)",

@@ -48,3 +48,21 @@ def test_sarif_format(dirty_dir, capsys):
 def test_regulation_flag(dirty_dir):
     # CPF rule is LGPD-only: gdpr-only scan of a CPF passes
     assert main(["scan", str(dirty_dir), "--regulation", "gdpr"]) == 0
+
+
+def test_nonexistent_path_errors(capsys):
+    assert main(["scan", "does/not/exist"]) == 2
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert "otto: path not found: does/not/exist" in captured.err
+
+
+def test_nonexistent_path_alongside_valid_path_still_errors(clean_dir, capsys):
+    assert main(["scan", str(clean_dir), "does/not/exist"]) == 2
+    captured = capsys.readouterr()
+    assert "otto: path not found: does/not/exist" in captured.err
+
+
+def test_valid_path_still_works_after_existence_check(clean_dir, capsys):
+    assert main(["scan", str(clean_dir)]) == 0
+    assert "100/100" in capsys.readouterr().out

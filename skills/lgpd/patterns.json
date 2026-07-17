@@ -48,7 +48,7 @@
   },
   "user_logging": {
     "regex": "(console\\.log|logger\\.(info|debug|error|warn))\\((?![^)]*\\buser\\.id\\b)[^)]*\\buser\\b[^)]*\\)",
-    "severity": "critical",
+    "severity": "high",
     "article": "LGPD Art. 46 (Segurança)",
     "message": "Possível exposição de dados pessoais em logs",
     "fix": "Log apenas IDs não-sensíveis: console.log('User ID:', user.id) ou use logger.sanitize(user)",
@@ -147,7 +147,7 @@
     "fine": "Até R$ 50 milhões"
   },
   "pii_in_error_message": {
-    "regex": "(throw\\s+new\\s+Error|raise\\s+\\w*(Error|Exception))\\([^)]*(cpf|email|user\\.)",
+    "regex": "(throw\\s+new\\s+Error|raise\\s+\\w*(Error|Exception))\\((?![^)]*\\buser\\.id\\b)[^)]*(cpf|email|user\\.)",
     "severity": "medium",
     "category": "data_exposure",
     "article": "LGPD Art. 46 (Segurança)",
@@ -165,7 +165,7 @@
     "fine": "Até R$ 50 milhões"
   },
   "ip_logging": {
-    "regex": "(console\\.log|logger\\.\\w+)\\([^)]*(req\\.ip|remote_addr|x-forwarded-for)",
+    "regex": "^(?!.*anonymi).*(console\\.log|logger\\.\\w+)\\([^)]*(req\\.ip|remote_addr|x-forwarded-for)",
     "severity": "medium",
     "category": "data_exposure",
     "article": "LGPD Art. 46 (IP é dado pessoal)",
@@ -192,7 +192,7 @@
     "fine": "Até R$ 50 milhões"
   },
   "retention_without_ttl": {
-    "regex": "^(?!.*(ttl|expire|EX)).*(cache|redis)\\.set\\([^)]*(user|email|cpf|profile)",
+    "regex": "^(?!.*(ttl|expir|setex)).*(cache|redis)\\.set\\([^)]*(user|email|cpf|profile)",
     "severity": "medium",
     "category": "retention",
     "article": "LGPD Art. 15/16 (Término do tratamento)",

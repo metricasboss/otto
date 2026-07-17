@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import argparse
+import sys
+from pathlib import Path
 from typing import List, Optional
 
 from otto.engine.reporters import get_renderer
@@ -19,6 +21,11 @@ def main(argv: Optional[List[str]] = None) -> int:
     scan.add_argument("--fail-under", type=int, default=60, metavar="N",
                       help="Exit non-zero if score is below N (default: 60)")
     args = parser.parse_args(argv)
+
+    for raw_path in args.paths:
+        if not Path(raw_path).exists():
+            print(f"otto: path not found: {raw_path}", file=sys.stderr)
+            return 2
 
     rules = load_rules(args.regulation)
     findings = scan_paths(args.paths, rules)
