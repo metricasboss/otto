@@ -23,7 +23,9 @@ def test_load_both_merges():
 
 
 def test_old_schema_gets_defaults():
-    rule = next(r for r in load_rules("lgpd") if r.id == "rg_exposure")
+    # password_plaintext keeps the old minimal schema (no category/negative_context/
+    # validator overrides), unlike rg_exposure which Task 9 tags as sensitive_data.
+    rule = next(r for r in load_rules("lgpd") if r.id == "password_plaintext")
     assert rule.files == ["**/*"]
     assert rule.exclude_files == DEFAULT_EXCLUDES
     assert rule.negative_context == []

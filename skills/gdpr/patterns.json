@@ -5,7 +5,8 @@
     "article": "GDPR Art. 32 (Security)",
     "message": "US Social Security Number exposed in code",
     "fix": "Remove hardcoded SSN. Retrieve from encrypted database or use environment variable for tests.",
-    "fine": "Up to €20M or 4% turnover"
+    "fine": "Up to €20M or 4% turnover",
+    "category": "sensitive_data"
   },
   "national_id_eu": {
     "regex": "\\b[A-Z]{2}\\d{6,9}[A-Z]?\\b",
@@ -13,7 +14,8 @@
     "article": "GDPR Art. 32 (Security)",
     "message": "Possible EU national ID number exposed",
     "fix": "Remove hardcoded ID. Fetch from secure source.",
-    "fine": "Up to €20M or 4% turnover"
+    "fine": "Up to €20M or 4% turnover",
+    "category": "sensitive_data"
   },
   "nhs_number": {
     "regex": "\\b\\d{3}\\s\\d{3}\\s\\d{4}\\b",
@@ -21,18 +23,20 @@
     "article": "GDPR Art. 9 (Special Categories - Health)",
     "message": "NHS number (UK health ID) exposed",
     "fix": "Health data requires explicit consent and extra protection.",
-    "fine": "Up to €20M or 4% turnover"
+    "fine": "Up to €20M or 4% turnover",
+    "category": "sensitive_data"
   },
   "email_hardcoded": {
-    "regex": "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b(?=.*[\"'])",
+    "regex": "[\"'][A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}[\"']",
     "severity": "medium",
     "article": "GDPR Art. 32",
     "message": "Email address hardcoded in code",
     "fix": "Use environment variable for configuration emails.",
-    "fine": "Up to €20M or 4% turnover"
+    "fine": "Up to €20M or 4% turnover",
+    "negative_context": ["example.com", "test@", "noreply@", "no-reply@", "dummy"]
   },
   "phone_international": {
-    "regex": "\\+\\d{1,3}\\s?\\d{1,4}\\s?\\d{1,4}\\s?\\d{1,9}",
+    "regex": "\\+\\d{1,3}[\\s.-]?\\(?\\d{2,4}\\)?[\\s.-]?\\d{3,4}[\\s.-]?\\d{4,9}",
     "severity": "medium",
     "article": "GDPR Art. 32",
     "message": "Phone number hardcoded",
@@ -40,7 +44,7 @@
     "fine": "Up to €20M or 4% turnover"
   },
   "user_logging": {
-    "regex": "console\\.log\\([^)]*user[^)]*\\)|logger\\.(info|debug|error|warn)\\([^)]*user[^)]*\\)",
+    "regex": "(console\\.log|logger\\.(info|debug|error|warn))\\((?![^)]*\\buser\\.id\\b)[^)]*\\buser\\b[^)]*\\)",
     "severity": "critical",
     "article": "GDPR Art. 32 (Security)",
     "message": "Possible personal data exposure in logs",
@@ -48,7 +52,7 @@
     "fine": "Up to €20M or 4% turnover"
   },
   "request_logging": {
-    "regex": "logger?\\.[^(]*\\([^)]*req\\.body[^)]*\\)|console\\.log\\([^)]*req\\.body[^)]*\\)",
+    "regex": "^(?!.*sanitiz).*(console\\.log|logger\\.\\w+)\\([^)]*req\\.body",
     "severity": "critical",
     "article": "GDPR Art. 32",
     "message": "req.body may contain personal data being logged without sanitization",
@@ -56,7 +60,7 @@
     "fine": "Up to €20M or 4% turnover"
   },
   "tracking_without_consent": {
-    "regex": "analytics\\.track\\([^)]*email[^)]*\\)|analytics\\.track\\([^)]*ssn[^)]*\\)|analytics\\.track\\([^)]*phone[^)]*\\)",
+    "regex": "^(?!.*hasConsent).*analytics\\.track\\([^)]*(email|ssn|phone)",
     "severity": "critical",
     "article": "GDPR Art. 6(1)(a) (Consent)",
     "message": "Tracking with personal data without consent verification",
@@ -96,7 +100,7 @@
     "fine": "Up to €20M or 4% turnover"
   },
   "cookie_without_consent": {
-    "regex": "document\\.cookie\\s*=.*(?!.*consent)",
+    "regex": "^(?!.*consent).*document\\.cookie\\s*=",
     "severity": "high",
     "article": "GDPR Art. 6(1)(a)",
     "message": "Cookie being set without checking consent",
@@ -112,7 +116,7 @@
     "fine": "Up to €20M or 4% turnover"
   },
   "sql_injection_risk": {
-    "regex": "query\\([\"'][^\"']*\\$\\{[^}]+\\}|query\\([\"'][^\"']*\\+\\s*[a-zA-Z]",
+    "regex": "query\\([\"'`][^\"'`)]*(\\$\\{[^}]+\\}|[\"'`]\\s*\\+\\s*[a-zA-Z])",
     "severity": "critical",
     "article": "GDPR Art. 32 (Security)",
     "message": "Possible SQL injection - risk of data exposure",
@@ -125,7 +129,9 @@
     "article": "GDPR Art. 9 (Special Categories)",
     "message": "Possible health data exposure (special category requiring explicit consent)",
     "fix": "Health data requires explicit consent and enhanced security measures",
-    "fine": "Up to €20M or 4% turnover"
+    "fine": "Up to €20M or 4% turnover",
+    "category": "special_category",
+    "negative_context": ["healthcheck", "health_check", "/health"]
   },
   "biometric_data": {
     "regex": "(fingerprint|facial[_-]?recognition|iris[_-]?scan|biometric)",
@@ -133,6 +139,8 @@
     "article": "GDPR Art. 9 (Special Categories)",
     "message": "Biometric data processing detected (special category)",
     "fix": "Biometric data requires explicit consent and must be processed with enhanced security",
-    "fine": "Up to €20M or 4% turnover"
+    "fine": "Up to €20M or 4% turnover",
+    "category": "special_category",
+    "negative_context": ["device fingerprint", "browser fingerprint", "fingerprintjs"]
   }
 }

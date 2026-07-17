@@ -1,0 +1,1 @@
+const healthcheckUrl = "/healthz";
