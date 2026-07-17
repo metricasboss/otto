@@ -2,7 +2,7 @@
 // This file contains intentional privacy violations for testing
 
 // ❌ VIOLATION 1: CPF hardcoded
-const adminCPF = "123.456.789-00";
+const adminCPF = "529.982.247-25";
 
 // ❌ VIOLATION 2: User data in logs
 function loginUser(user) {

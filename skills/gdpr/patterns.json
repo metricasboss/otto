@@ -100,12 +100,13 @@
     "fine": "Up to €20M or 4% turnover"
   },
   "cookie_without_consent": {
-    "regex": "^(?!.*consent).*document\\.cookie\\s*=",
+    "regex": "(?:^.*\\n){0,2}^.*document\\.cookie\\s*=",
     "severity": "high",
     "article": "GDPR Art. 6(1)(a)",
     "message": "Cookie being set without checking consent",
     "fix": "Check consent first: if (cookieConsent.hasConsent('functional')) { ... }",
-    "fine": "Up to €20M or 4% turnover"
+    "fine": "Up to €20M or 4% turnover",
+    "validator": "no_consent_context"
   },
   "external_data_sharing": {
     "regex": "axios\\.(post|put|patch)\\([^)]*user\\.[^)]*\\)|fetch\\([^)]*method:\\s*[\"'](POST|PUT|PATCH)[\"'][^)]*user[^)]*\\)",
@@ -113,7 +114,8 @@
     "article": "GDPR Art. 6(1)(a) + Art. 44 (Transfers)",
     "message": "Possible data sharing with external service",
     "fix": "Check consent and minimize data before sending",
-    "fine": "Up to €20M or 4% turnover"
+    "fine": "Up to €20M or 4% turnover",
+    "validator": "no_anonymization_context"
   },
   "sql_injection_risk": {
     "regex": "query\\([\"'`][^\"'`)]*(\\$\\{[^}]+\\}|[\"'`]\\s*\\+\\s*[a-zA-Z])",

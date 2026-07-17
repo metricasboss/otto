@@ -103,12 +103,13 @@
     "fine": "Até R$ 50 milhões"
   },
   "cookie_without_consent": {
-    "regex": "^(?!.*consent).*document\\.cookie\\s*=",
+    "regex": "(?:^.*\\n){0,2}^.*document\\.cookie\\s*=",
     "severity": "high",
     "article": "LGPD Art. 7º I",
     "message": "Cookie sendo criado sem verificar consentimento",
     "fix": "Verifique consentimento antes: if (cookieConsent.hasConsent('functional')) { ... }",
-    "fine": "Até R$ 50 milhões"
+    "fine": "Até R$ 50 milhões",
+    "validator": "no_consent_context"
   },
   "external_data_sharing": {
     "regex": "axios\\.(post|put|patch)\\([^)]*user\\.[^)]*\\)|fetch\\([^)]*method:\\s*[\"'](POST|PUT|PATCH)[\"'][^)]*user[^)]*\\)",
@@ -116,7 +117,8 @@
     "article": "LGPD Art. 7º I (Consentimento) + Art. 16",
     "message": "Possível compartilhamento de dados com serviço externo",
     "fix": "Verifique consentimento e minimize dados antes de enviar",
-    "fine": "Até R$ 50 milhões"
+    "fine": "Até R$ 50 milhões",
+    "validator": "no_anonymization_context"
   },
   "sql_injection_risk": {
     "regex": "query\\([\"'`][^\"'`)]*(\\$\\{[^}]+\\}|[\"'`]\\s*\\+\\s*[a-zA-Z])",
