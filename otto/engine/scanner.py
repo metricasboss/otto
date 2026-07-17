@@ -3,12 +3,24 @@ from __future__ import annotations
 import re
 import sys
 from dataclasses import dataclass
+from fnmatch import fnmatch
 from pathlib import Path
 from typing import List, Set, Tuple
 
 from otto.engine.rules import Rule
+from otto.engine.validators import VALIDATORS
 
 SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}
+SUPPRESS_RE = re.compile(r"otto-ignore:\s*([\w,\- ]+?)\s*--\s*(\S.+)")
+
+
+def _glob_match(path: str, pattern: str) -> bool:
+    if fnmatch(path, pattern):
+        return True
+    # "**/" must also match zero directories: "**/*.md" matches "README.md"
+    if pattern.startswith("**/") and fnmatch(path, pattern[3:]):
+        return True
+    return False
 
 
 @dataclass
@@ -28,23 +40,44 @@ class Finding:
 
 
 def _applies_to_file(file_path: str, rule: Rule) -> bool:
-    # Filled in by Task 4 (glob include/exclude). Until then: everything applies.
+    if not file_path:
+        return True  # hook mode / stdin: no path to filter on
+    path = file_path.replace("\\", "/")
+    if not any(_glob_match(path, g) for g in rule.files):
+        return False
+    if any(_glob_match(path, g) for g in rule.exclude_files):
+        return False
     return True
 
 
 def _is_suppressed(line_text: str, lines: List[str], line_num: int, rule_id: str) -> bool:
-    # Filled in by Task 4 (otto-ignore). Until then: nothing is suppressed.
+    candidates = [line_text]
+    if line_num >= 2:
+        candidates.append(lines[line_num - 2])
+    for text in candidates:
+        match = SUPPRESS_RE.search(text)
+        if match:
+            suppressed_ids = [r.strip() for r in match.group(1).split(",")]
+            if rule_id in suppressed_ids:
+                return True
     return False
 
 
 def _adjust_severity(rule: Rule, line_text: str) -> Tuple[str, str]:
-    # Filled in by Task 4 (negative_context downgrade).
+    lowered = line_text.lower()
+    for term in rule.negative_context:
+        if term in lowered:
+            return "low", "possible test data (negative context matched)"
     return rule.severity, ""
 
 
 def _passes_validator(rule: Rule, matched_text: str) -> bool:
-    # Filled in by Task 4 (check-digit validators).
-    return True
+    if rule.validator is None:
+        return True
+    validator = VALIDATORS.get(rule.validator)
+    if validator is None:
+        return True  # unknown validator name: fail open, rule still applies
+    return validator(matched_text)
 
 
 def scan_content(content: str, file_path: str, rules: List[Rule]) -> List[Finding]:
