@@ -80,6 +80,20 @@ def _passes_validator(rule: Rule, matched_text: str) -> bool:
     return validator(matched_text)
 
 
+def _anchor_match(content: str, match: re.Match) -> Tuple[int, str]:
+    # Multiline matches (e.g. cookie_without_consent's up-to-2-preceding-lines
+    # regex) must anchor to their LAST line -- the violation -- not
+    # match.start(), which may sit on a preceding comment/context line.
+    matched = match.group(0)
+    if "\n" not in matched:
+        return content[: match.start()].count("\n") + 1, matched[:80]
+    stripped = matched.rstrip("\n")
+    if not stripped:
+        return content[: match.start()].count("\n") + 1, ""
+    last_char_pos = match.start() + len(stripped) - 1
+    return content[:last_char_pos].count("\n") + 1, stripped.splitlines()[-1][:80]
+
+
 def scan_content(content: str, file_path: str, rules: List[Rule]) -> List[Finding]:
     findings: List[Finding] = []
     seen: Set[Tuple[str, str, int]] = set()
@@ -93,7 +107,7 @@ def scan_content(content: str, file_path: str, rules: List[Rule]) -> List[Findin
             print(f"otto: skipping rule '{rule.id}' (invalid regex: {exc})", file=sys.stderr)
             continue
         for match in matches:
-            line_num = content[: match.start()].count("\n") + 1
+            line_num, matched_text = _anchor_match(content, match)
             key = (rule.id, file_path, line_num)
             if key in seen:
                 continue
@@ -104,22 +118,12 @@ def scan_content(content: str, file_path: str, rules: List[Rule]) -> List[Findin
                 continue
             severity, note = _adjust_severity(rule, line_text)
             seen.add(key)
-            findings.append(
-                Finding(
-                    rule_id=rule.id,
-                    regulation=rule.regulation,
-                    severity=severity,
-                    category=rule.category,
-                    article=rule.article,
-                    message=rule.message,
-                    fix=rule.fix,
-                    fine=rule.fine,
-                    file_path=file_path,
-                    line=line_num,
-                    matched_text=match.group(0)[:80],
-                    note=note,
-                )
-            )
+            findings.append(Finding(
+                rule_id=rule.id, regulation=rule.regulation, severity=severity,
+                category=rule.category, article=rule.article, message=rule.message,
+                fix=rule.fix, fine=rule.fine, file_path=file_path, line=line_num,
+                matched_text=matched_text, note=note,
+            ))
     findings.sort(key=lambda f: (SEVERITY_ORDER[f.severity], f.file_path, f.line))
     return findings
 
@@ -128,9 +132,7 @@ def scan_paths(paths: List[str], rules: List[Rule]) -> List[Finding]:
     findings: List[Finding] = []
     for raw in paths:
         path = Path(raw)
-        files = [path] if path.is_file() else sorted(
-            p for p in path.rglob("*") if p.is_file()
-        )
+        files = [path] if path.is_file() else sorted(p for p in path.rglob("*") if p.is_file())
         for file in files:
             try:
                 content = file.read_text(encoding="utf-8")

@@ -61,3 +61,40 @@ def test_scan_paths_skips_binary(tmp_path):
     (tmp_path / "app.js").write_text('const password = "hunter2secret";\n')
     findings = scan_paths([str(tmp_path)], [RULE])
     assert len(findings) == 1
+
+
+MULTILINE_RULE = Rule(
+    id="multiline_rule",
+    regex=r"(?:^.*\n){0,2}^.*document\.cookie\s*=",
+    severity="high",
+    article="X",
+    message="m",
+    fix="f",
+    exclude_files=[],
+)
+
+
+def test_multiline_match_anchors_to_last_line():
+    content = (
+        "// comment line 1\n"
+        "function setCookie(userId) {\n"
+        "  document.cookie = `user_id=${userId}`;\n"
+        "}\n"
+    )
+    findings = scan_content(content, "src/app.js", [MULTILINE_RULE])
+    assert len(findings) == 1
+    f = findings[0]
+    assert f.line == 3
+    assert "document.cookie" in f.matched_text
+    assert "comment" not in f.matched_text
+
+
+def test_multiline_match_otto_ignore_on_final_line_suppresses():
+    content = (
+        "// comment line 1\n"
+        "function setCookie(userId) {\n"
+        "  document.cookie = `user_id=${userId}`; // otto-ignore: multiline_rule -- test data\n"
+        "}\n"
+    )
+    findings = scan_content(content, "src/app.js", [MULTILINE_RULE])
+    assert findings == []
