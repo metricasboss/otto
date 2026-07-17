@@ -34,7 +34,7 @@ cd otto
 
 ```bash
 # Scan the unsafe example
-python3 scripts/scan_privacy.py examples/unsafe_code.js
+python3 -m otto scan examples/unsafe_code.js
 
 # Should show ~10 violations detected
 ```
@@ -116,7 +116,7 @@ ls -la ~/.claude/skills/otto/
 cat ~/.claude/settings.json | grep -A 10 "hooks"
 
 # Test scanner directly
-python3 ~/.claude/skills/otto/scripts/scan_privacy.py myfile.js
+python3 -m otto scan myfile.js
 
 # Change regulation
 cd ~/.claude/skills/otto/
@@ -172,7 +172,7 @@ ls ~/.claude/skills/otto/SKILL.md
 python3 --version
 
 # Make script executable
-chmod +x ~/.claude/skills/otto/scripts/scan_privacy.py
+chmod +x ~/.claude/skills/otto/engine/run_hook.py
 
 # Check settings
 cat ~/.claude/settings.json
@@ -184,7 +184,7 @@ OTTO uses regex patterns and may flag some safe code. This is normal!
 
 **Options:**
 1. Review and ignore if code is actually safe
-2. Adjust patterns in `~/.claude/skills/otto/scripts/patterns.json`
+2. Adjust patterns in `~/.claude/skills/otto/engine/skills/<regulation>/patterns.json`
 3. Add comments explaining why code is safe
 
 ---

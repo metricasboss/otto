@@ -25,37 +25,29 @@ install_for_editor() {
   local skills_dir=$2
   local supports_hooks=$3
 
-  mkdir -p "$skills_dir/scripts"
+  mkdir -p "$skills_dir/engine"
 
-  # Copy scanner script
-  cp "$SCRIPT_DIR/scripts/scan_privacy.py" "$skills_dir/scripts/"
-  chmod +x "$skills_dir/scripts/scan_privacy.py"
+  # Copy the OTTO engine package and launcher
+  rm -rf "$skills_dir/engine/otto"
+  cp -R "$SCRIPT_DIR/otto" "$skills_dir/engine/otto"
+  mkdir -p "$skills_dir/engine/skills/lgpd" "$skills_dir/engine/skills/gdpr"
+  cp "$SCRIPT_DIR/skills/lgpd/patterns.json" "$skills_dir/engine/skills/lgpd/"
+  cp "$SCRIPT_DIR/skills/gdpr/patterns.json" "$skills_dir/engine/skills/gdpr/"
+  cp "$SCRIPT_DIR/scripts/run_hook.py" "$skills_dir/engine/run_hook.py"
+  chmod +x "$skills_dir/engine/run_hook.py"
 
-  # Copy skill and patterns based on regulation
+  # Copy skill definition and set active regulation
   case $REGULATION in
     lgpd)
       cp "$SCRIPT_DIR/skills/lgpd/SKILL.md" "$skills_dir/"
-      cp "$SCRIPT_DIR/skills/lgpd/patterns.json" "$skills_dir/scripts/"
       echo "lgpd" > "$skills_dir/.regulation"
       ;;
     gdpr)
       cp "$SCRIPT_DIR/skills/gdpr/SKILL.md" "$skills_dir/"
-      cp "$SCRIPT_DIR/skills/gdpr/patterns.json" "$skills_dir/scripts/"
       echo "gdpr" > "$skills_dir/.regulation"
       ;;
     both)
       cp "$SCRIPT_DIR/skills/lgpd/SKILL.md" "$skills_dir/"
-      # Merge patterns
-      python3 -c "
-import json
-with open('$SCRIPT_DIR/skills/lgpd/patterns.json') as f:
-    lgpd = json.load(f)
-with open('$SCRIPT_DIR/skills/gdpr/patterns.json') as f:
-    gdpr = json.load(f)
-merged = {**lgpd, **gdpr}
-with open('$skills_dir/scripts/patterns.json', 'w') as f:
-    json.dump(merged, f, indent=2)
-"
       echo "both" > "$skills_dir/.regulation"
       ;;
     *)
@@ -88,30 +80,33 @@ import json
 settings_file = '$settings_file'
 skills_dir = '$skills_dir'
 
-try:
-    with open(settings_file, 'r') as f:
-        settings = json.load(f)
-except:
-    settings = {}
+with open(settings_file) as f:
+    settings = json.load(f)
 
-if 'hooks' not in settings:
-    settings['hooks'] = {}
+hooks = settings.setdefault('hooks', {})
 
-if 'PostToolUse' not in settings['hooks']:
-    settings['hooks']['PostToolUse'] = []
+# Remove legacy OTTO PostToolUse hooks (pre-2.0 installs pointed at
+# {skills_dir}/scripts/, a layout the current installer no longer creates)
+if 'PostToolUse' in hooks:
+    legacy_marker = skills_dir + '/scripts/'
+    hooks['PostToolUse'] = [
+        h for h in hooks['PostToolUse']
+        if legacy_marker not in json.dumps(h)
+    ]
+    if not hooks['PostToolUse']:
+        del hooks['PostToolUse']
 
-# OTTO hook configuration
+pre = hooks.setdefault('PreToolUse', [])
 otto_hook = {
     'matcher': 'Edit|Write',
     'hooks': [{
         'type': 'command',
-        'command': f'python3 {skills_dir}/scripts/scan_privacy.py'
+        'command': f'python3 {skills_dir}/engine/run_hook.py'
     }]
 }
-
-# Add if not present
-if otto_hook not in settings['hooks']['PostToolUse']:
-    settings['hooks']['PostToolUse'].append(otto_hook)
+# Replace any previous OTTO PreToolUse entry, then append the current one
+pre[:] = [h for h in pre if 'run_hook.py' not in json.dumps(h)]
+pre.append(otto_hook)
 
 with open(settings_file, 'w') as f:
     json.dump(settings, f, indent=2)

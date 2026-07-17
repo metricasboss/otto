@@ -129,6 +129,7 @@ When hooks are enabled on Claude Code:
 - **Before edits**: Blocks privacy violations before they're saved
 - **Before commits**: Ensures clean commits
 - **CI/CD ready**: Can integrate into your build pipeline
+- Critical violations deny the edit via a PreToolUse hook; the agent receives the article and suggested fix and can self-correct.
 
 ---
 
@@ -166,7 +167,8 @@ Invoke OTTO directly in Claude Code:
 Run the scanner directly on files:
 
 ```bash
-python3 ~/.claude/skills/otto/scripts/scan_privacy.py myfile.js
+python3 -m otto scan src/ --format text          # from a repo checkout
+python3 -m otto scan src/ --format sarif > otto.sarif
 ```
 
 ---
@@ -301,6 +303,19 @@ otto/
 ├── QUICKSTART.md                 # 2-minute setup guide
 ├── LICENSE                       # MIT License
 │
+├── otto/                         # Python engine package
+│   ├── cli.py                    # `python3 -m otto scan ...`
+│   ├── hook.py                   # PreToolUse hook entry point
+│   └── engine/
+│       ├── rules.py              # Rule loading + Rule dataclass
+│       ├── scanner.py            # Scan orchestration + false-positive layers
+│       ├── scorer.py             # Compliance scoring
+│       ├── validators.py         # CPF/CNPJ check-digit validators
+│       └── reporters/            # text / json / sarif output
+│
+├── scripts/
+│   └── run_hook.py               # Installed launcher for otto/hook.py
+│
 ├── skills/
 │   ├── lgpd/                     # Brazilian regulation
 │   │   ├── SKILL.md              # LGPD skill definition
@@ -310,8 +325,7 @@ otto/
 │       ├── SKILL.md              # GDPR skill definition
 │       └── patterns.json         # GDPR violation patterns
 │
-├── scripts/
-│   └── scan_privacy.py           # Python scanner engine
+├── tests/                        # pytest suite
 │
 └── examples/
     ├── unsafe_code.js            # Code with violations
@@ -413,7 +427,7 @@ Edit `skills/lgpd/patterns.json` or `skills/gdpr/patterns.json`:
 
 1. Check settings: `cat ~/.claude/settings.json`
 2. Verify Python is installed: `python3 --version`
-3. Make scanner executable: `chmod +x ~/.claude/skills/otto/scripts/scan_privacy.py`
+3. Make scanner executable: `chmod +x ~/.claude/skills/otto/engine/run_hook.py`
 4. **Note:** Hooks only work on Claude Code, not other editors
 
 ### False positives
@@ -421,7 +435,7 @@ Edit `skills/lgpd/patterns.json` or `skills/gdpr/patterns.json`:
 OTTO uses regex patterns and may flag legitimate code. You can:
 
 1. Add context in comments explaining why code is safe
-2. Adjust patterns in `~/.claude/skills/otto/scripts/patterns.json`
+2. Adjust patterns in `~/.claude/skills/otto/engine/skills/<regulation>/patterns.json`
 3. Disable specific patterns by removing them from JSON
 
 ---
