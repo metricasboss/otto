@@ -125,5 +125,77 @@
     "message": "Possível SQL injection - risco de exposição de dados",
     "fix": "Use prepared statements com placeholders: query('SELECT * FROM users WHERE id = ?', [userId])",
     "fine": "Até R$ 50 milhões"
+  },
+  "pii_in_url": {
+    "regex": "[?&](cpf|email|telefone|phone|rg|cnpj)=",
+    "severity": "high",
+    "category": "data_exposure",
+    "article": "LGPD Art. 46 (Segurança)",
+    "message": "Dado pessoal transmitido em query string (fica em logs de servidor, proxies e histórico)",
+    "fix": "Envie dados pessoais no body de um POST, nunca na URL.",
+    "fine": "Até R$ 50 milhões"
+  },
+  "gtag_pii": {
+    "regex": "(gtag|dataLayer\\.push|mixpanel\\.track|amplitude\\.track)\\([^)]*(email|cpf|phone|telefone)",
+    "severity": "critical",
+    "category": "consent",
+    "article": "LGPD Art. 7º I (Consentimento)",
+    "message": "PII enviado para ferramenta de analytics/tag manager",
+    "fix": "Envie apenas IDs pseudonimizados: gtag('event', 'login', { user_id: hash(id) })",
+    "fine": "Até R$ 50 milhões"
+  },
+  "pii_in_error_message": {
+    "regex": "(throw\\s+new\\s+Error|raise\\s+\\w*(Error|Exception))\\([^)]*(cpf|email|user\\.)",
+    "severity": "medium",
+    "category": "data_exposure",
+    "article": "LGPD Art. 46 (Segurança)",
+    "message": "Dado pessoal em mensagem de erro (pode vazar em logs e telas de erro)",
+    "fix": "Inclua apenas IDs no erro: throw new Error(`User ${user.id} not found`)",
+    "fine": "Até R$ 50 milhões"
+  },
+  "hardcoded_jwt": {
+    "regex": "eyJ[A-Za-z0-9_-]{20,}\\.[A-Za-z0-9_-]{10,}",
+    "severity": "high",
+    "category": "secrets",
+    "article": "LGPD Art. 46 (Segurança)",
+    "message": "JWT hardcoded no código (tokens carregam identidade do titular)",
+    "fix": "Remova o token. Use variável de ambiente ou secret manager.",
+    "fine": "Até R$ 50 milhões"
+  },
+  "ip_logging": {
+    "regex": "(console\\.log|logger\\.\\w+)\\([^)]*(req\\.ip|remote_addr|x-forwarded-for)",
+    "severity": "medium",
+    "category": "data_exposure",
+    "article": "LGPD Art. 46 (IP é dado pessoal)",
+    "message": "Endereço IP sendo logado sem anonimização",
+    "fix": "Anonimize antes de logar: logger.info(anonymizeIp(req.ip))",
+    "fine": "Até R$ 50 milhões"
+  },
+  "geolocation_without_consent": {
+    "regex": "^(?!.*consent).*(getCurrentPosition|watchPosition)\\s*\\(",
+    "severity": "medium",
+    "category": "consent",
+    "article": "LGPD Art. 7º I (Consentimento)",
+    "message": "Coleta de geolocalização sem verificação de consentimento no mesmo fluxo",
+    "fix": "Condicione: if (user.hasConsent('geolocation')) navigator.geolocation.getCurrentPosition(...)",
+    "fine": "Até R$ 50 milhões"
+  },
+  "webhook_pii": {
+    "regex": "(hooks\\.slack\\.com|discord\\.com/api/webhooks)",
+    "severity": "high",
+    "category": "third_party",
+    "article": "LGPD Art. 7º I + Art. 16 (Compartilhamento)",
+    "message": "Webhook de terceiro no código — verifique se dados pessoais fluem para ele",
+    "fix": "Garanta minimização: envie apenas dados agregados/anonimizados ao webhook.",
+    "fine": "Até R$ 50 milhões"
+  },
+  "retention_without_ttl": {
+    "regex": "^(?!.*(ttl|expire|EX)).*(cache|redis)\\.set\\([^)]*(user|email|cpf|profile)",
+    "severity": "medium",
+    "category": "retention",
+    "article": "LGPD Art. 15/16 (Término do tratamento)",
+    "message": "Dado pessoal em cache sem TTL — retenção indefinida viola término do tratamento",
+    "fix": "Defina expiração: cache.set(key, value, { ttl: 3600 })",
+    "fine": "Até R$ 50 milhões"
   }
 }

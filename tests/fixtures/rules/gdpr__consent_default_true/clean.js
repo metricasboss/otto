@@ -1,0 +1,1 @@
+const settings = { consent: false };

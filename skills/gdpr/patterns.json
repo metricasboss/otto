@@ -142,5 +142,41 @@
     "fine": "Up to €20M or 4% turnover",
     "category": "special_category",
     "negative_context": ["device fingerprint", "browser fingerprint", "fingerprintjs"]
+  },
+  "pii_in_url": {
+    "regex": "[?&](ssn|email|phone|dob)=",
+    "severity": "high",
+    "category": "data_exposure",
+    "article": "GDPR Art. 32 (Security)",
+    "message": "Personal data transmitted in query string (persisted in server logs, proxies, history)",
+    "fix": "Send personal data in a POST body, never in the URL.",
+    "fine": "Up to €20M or 4% turnover"
+  },
+  "gtag_pii": {
+    "regex": "(gtag|dataLayer\\.push|mixpanel\\.track|amplitude\\.track)\\([^)]*(email|ssn|phone)",
+    "severity": "critical",
+    "category": "consent",
+    "article": "GDPR Art. 6(1)(a) (Consent)",
+    "message": "PII sent to analytics/tag management tool",
+    "fix": "Send only pseudonymized IDs: gtag('event', 'login', { user_id: hash(id) })",
+    "fine": "Up to €20M or 4% turnover"
+  },
+  "consent_default_true": {
+    "regex": "(consent|opt[_-]?in)\\s*[:=]\\s*true",
+    "severity": "high",
+    "category": "consent",
+    "article": "GDPR Art. 7(3) + Recital 32 (pre-ticked consent is invalid)",
+    "message": "Consent defaulting to true — pre-ticked consent is not valid consent",
+    "fix": "Default to false and require an affirmative user action to enable.",
+    "fine": "Up to €20M or 4% turnover"
+  },
+  "dob_hardcoded": {
+    "regex": "(birth[_-]?date|date[_-]?of[_-]?birth|dob)\\s*[:=]\\s*[\"']\\d",
+    "severity": "medium",
+    "category": "sensitive_data",
+    "article": "GDPR Art. 32 (Security)",
+    "message": "Date of birth hardcoded in code",
+    "fix": "Remove the hardcoded date of birth; fetch from a secure source.",
+    "fine": "Up to €20M or 4% turnover"
   }
 }
