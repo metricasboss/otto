@@ -1,1 +1,1 @@
-const country = "BR";
+const sha = "ab1234567";

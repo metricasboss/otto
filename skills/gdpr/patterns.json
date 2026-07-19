@@ -15,7 +15,8 @@
     "message": "Possible EU national ID number exposed",
     "fix": "Remove hardcoded ID. Fetch from secure source.",
     "fine": "Up to €20M or 4% turnover",
-    "category": "sensitive_data"
+    "category": "sensitive_data",
+    "case_sensitive": true
   },
   "nhs_number": {
     "regex": "\\b\\d{3}\\s\\d{3}\\s\\d{4}\\b",

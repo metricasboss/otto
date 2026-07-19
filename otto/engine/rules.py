@@ -36,6 +36,7 @@ class Rule:
     exclude_files: List[str] = field(default_factory=lambda: list(DEFAULT_EXCLUDES))
     negative_context: List[str] = field(default_factory=list)
     validator: Optional[str] = None
+    case_sensitive: bool = False
 
 
 def _load_file(path: Path, regulation: str) -> List[Rule]:
@@ -62,6 +63,7 @@ def _load_file(path: Path, regulation: str) -> List[Rule]:
                 exclude_files=raw.get("exclude_files", list(DEFAULT_EXCLUDES)),
                 negative_context=[t.lower() for t in raw.get("negative_context", [])],
                 validator=raw.get("validator"),
+                case_sensitive=bool(raw.get("case_sensitive", False)),
             )
         )
     return rules
