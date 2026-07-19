@@ -36,6 +36,9 @@ install_for_editor() {
   cp "$SCRIPT_DIR/scripts/run_hook.py" "$skills_dir/engine/run_hook.py"
   chmod +x "$skills_dir/engine/run_hook.py"
 
+  # Remove pre-2.0 layout leftovers
+  rm -rf "$skills_dir/scripts"
+
   # Copy skill definition and set active regulation
   case $REGULATION in
     lgpd)
@@ -65,6 +68,37 @@ install_for_editor() {
   fi
 }
 
+# Remove pre-2.0 OTTO hooks from settings (runs even with --no-hooks:
+# cleanup is not hook installation)
+cleanup_legacy_hooks() {
+  local skills_dir=$1
+  local settings_file="$HOME/.claude/settings.json"
+  [ -f "$settings_file" ] || return 0
+
+  python3 -c "
+import json
+
+settings_file = '$settings_file'
+skills_dir = '$skills_dir'
+
+with open(settings_file) as f:
+    settings = json.load(f)
+
+hooks = settings.get('hooks', {})
+if 'PostToolUse' in hooks:
+    legacy_marker = skills_dir + '/scripts/'
+    hooks['PostToolUse'] = [
+        h for h in hooks['PostToolUse']
+        if legacy_marker not in json.dumps(h)
+    ]
+    if not hooks['PostToolUse']:
+        del hooks['PostToolUse']
+
+with open(settings_file, 'w') as f:
+    json.dump(settings, f, indent=2)
+"
+}
+
 # Configure hooks for Claude Code
 configure_claude_hooks() {
   local skills_dir=$1
@@ -84,17 +118,6 @@ with open(settings_file) as f:
     settings = json.load(f)
 
 hooks = settings.setdefault('hooks', {})
-
-# Remove legacy OTTO PostToolUse hooks (pre-2.0 installs pointed at
-# {skills_dir}/scripts/, a layout the current installer no longer creates)
-if 'PostToolUse' in hooks:
-    legacy_marker = skills_dir + '/scripts/'
-    hooks['PostToolUse'] = [
-        h for h in hooks['PostToolUse']
-        if legacy_marker not in json.dumps(h)
-    ]
-    if not hooks['PostToolUse']:
-        del hooks['PostToolUse']
 
 pre = hooks.setdefault('PreToolUse', [])
 otto_hook = {
@@ -117,6 +140,7 @@ with open(settings_file, 'w') as f:
 # Claude Code
 if [ -d "$HOME/.claude" ]; then
   install_for_editor "Claude Code" "$HOME/.claude/skills/otto" true
+  cleanup_legacy_hooks "$HOME/.claude/skills/otto"
   INSTALLED=$((INSTALLED + 1))
 fi
 
