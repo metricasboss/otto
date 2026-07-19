@@ -38,13 +38,17 @@ runs:
       shell: bash
       working-directory: ${{ github.workspace }}
       run: |
-        git fetch --no-tags origin "$GITHUB_BASE_REF"
-        git diff --name-only --diff-filter=d "origin/$GITHUB_BASE_REF...HEAD" > "$RUNNER_TEMP/otto-files.txt"
-        : > "$RUNNER_TEMP/otto-existing.txt"
-        while IFS= read -r f; do
-          [ -f "$f" ] && printf '%s\n' "$f" >> "$RUNNER_TEMP/otto-existing.txt"
-        done < "$RUNNER_TEMP/otto-files.txt"
-        count=$(wc -l < "$RUNNER_TEMP/otto-existing.txt" | tr -d ' ')
+        git fetch --no-tags origin "+refs/heads/$GITHUB_BASE_REF:refs/remotes/origin/$GITHUB_BASE_REF"
+        if ! git merge-base -q "origin/$GITHUB_BASE_REF" HEAD 2>/dev/null; then
+          echo "OTTO: shallow clone detected, unshallowing to find merge base"
+          git fetch --unshallow --no-tags origin || git fetch --no-tags --deepen=1000 origin
+        fi
+        git diff --name-only --diff-filter=d -z "origin/$GITHUB_BASE_REF...HEAD" > "$RUNNER_TEMP/otto-files.zlist"
+        : > "$RUNNER_TEMP/otto-existing.zlist"
+        while IFS= read -r -d '' f; do
+          [ -f "$f" ] && printf '%s\0' "$f" >> "$RUNNER_TEMP/otto-existing.zlist"
+        done < "$RUNNER_TEMP/otto-files.zlist"
+        count=$(tr -cd '\0' < "$RUNNER_TEMP/otto-existing.zlist" | wc -c | tr -d ' ')
         echo "count=$count" >> "$GITHUB_OUTPUT"
         echo "OTTO: $count changed file(s) to scan"
 
@@ -55,16 +59,17 @@ runs:
       env:
         PYTHONPATH: ${{ github.action_path }}
       run: |
-        xargs -a "$RUNNER_TEMP/otto-existing.txt" \
+        xargs -0 -a "$RUNNER_TEMP/otto-existing.zlist" \
           python3 -m otto scan --regulation "${{ inputs.regulation }}" --fail-under 0 --format json \
           > "$RUNNER_TEMP/otto-report.json"
-        xargs -a "$RUNNER_TEMP/otto-existing.txt" \
+        xargs -0 -a "$RUNNER_TEMP/otto-existing.zlist" \
           python3 -m otto scan --regulation "${{ inputs.regulation }}" --fail-under 0 --format sarif \
           > "$RUNNER_TEMP/otto.sarif"
 
     - name: Build comment body
       if: inputs.comment == 'true'
       shell: bash
+      continue-on-error: true
       working-directory: ${{ github.workspace }}
       env:
         PYTHONPATH: ${{ github.action_path }}
@@ -119,6 +124,6 @@ runs:
       env:
         PYTHONPATH: ${{ github.action_path }}
       run: |
-        xargs -a "$RUNNER_TEMP/otto-existing.txt" \
+        xargs -0 -a "$RUNNER_TEMP/otto-existing.zlist" \
           python3 -m otto scan --regulation "${{ inputs.regulation }}" \
           --fail-under "${{ inputs.fail-under }}" --format text
