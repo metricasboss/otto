@@ -20,3 +20,5 @@ jobs:
       - run: python3 -m pytest tests/ -v
       - name: OTTO self-scan (sanity)
         run: python3 -m otto scan examples/unsafe_code.js --fail-under 0
+      - name: OTTO self-scan canary (no self-matching regressions)
+        run: python3 -m otto scan otto/ skills/ scripts/ --fail-under 100

@@ -39,7 +39,7 @@ runs:
       working-directory: ${{ github.workspace }}
       run: |
         git fetch --no-tags origin "+refs/heads/$GITHUB_BASE_REF:refs/remotes/origin/$GITHUB_BASE_REF"
-        if ! git merge-base -q "origin/$GITHUB_BASE_REF" HEAD 2>/dev/null; then
+        if ! git merge-base "origin/$GITHUB_BASE_REF" HEAD >/dev/null 2>&1; then
           echo "OTTO: shallow clone detected, unshallowing to find merge base"
           git fetch --unshallow --no-tags origin || git fetch --no-tags --deepen=1000 origin
         fi
@@ -59,11 +59,11 @@ runs:
       env:
         PYTHONPATH: ${{ github.action_path }}
       run: |
-        xargs -0 -a "$RUNNER_TEMP/otto-existing.zlist" \
-          python3 -m otto scan --regulation "${{ inputs.regulation }}" --fail-under 0 --format json \
+        python3 -m otto scan --paths-from "$RUNNER_TEMP/otto-existing.zlist" \
+          --regulation "${{ inputs.regulation }}" --fail-under 0 --format json \
           > "$RUNNER_TEMP/otto-report.json"
-        xargs -0 -a "$RUNNER_TEMP/otto-existing.zlist" \
-          python3 -m otto scan --regulation "${{ inputs.regulation }}" --fail-under 0 --format sarif \
+        python3 -m otto scan --paths-from "$RUNNER_TEMP/otto-existing.zlist" \
+          --regulation "${{ inputs.regulation }}" --fail-under 0 --format sarif \
           > "$RUNNER_TEMP/otto.sarif"
 
     - name: Build comment body
@@ -73,10 +73,10 @@ runs:
       working-directory: ${{ github.workspace }}
       env:
         PYTHONPATH: ${{ github.action_path }}
+        OTTO_REGULATION: ${{ inputs.regulation }}
       run: |
         if [ "${{ steps.files.outputs.count }}" = "0" ]; then
-          printf '%s' '{"regulation":"${{ inputs.regulation }}","score":100,"per_file":{},"counts":{"critical":0,"high":0,"medium":0,"low":0},"findings":[]}' \
-            > "$RUNNER_TEMP/otto-report.json"
+          python3 -c "import json,os;print(json.dumps({'regulation':os.environ.get('OTTO_REGULATION','both'),'score':100,'per_file':{},'counts':{'critical':0,'high':0,'medium':0,'low':0},'findings':[]}))" > "$RUNNER_TEMP/otto-report.json"
         fi
         python3 -m otto.action.report "$RUNNER_TEMP/otto-report.json" > "$RUNNER_TEMP/otto-comment.md"
 
@@ -124,6 +124,6 @@ runs:
       env:
         PYTHONPATH: ${{ github.action_path }}
       run: |
-        xargs -0 -a "$RUNNER_TEMP/otto-existing.zlist" \
-          python3 -m otto scan --regulation "${{ inputs.regulation }}" \
+        python3 -m otto scan --paths-from "$RUNNER_TEMP/otto-existing.zlist" \
+          --regulation "${{ inputs.regulation }}" \
           --fail-under "${{ inputs.fail-under }}" --format text

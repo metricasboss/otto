@@ -121,7 +121,7 @@ hooks = settings.setdefault('hooks', {})
 
 pre = hooks.setdefault('PreToolUse', [])
 otto_hook = {
-    'matcher': 'Edit|Write',
+    'matcher': 'Edit|MultiEdit|Write',
     'hooks': [{
         'type': 'command',
         'command': f'python3 {skills_dir}/engine/run_hook.py'

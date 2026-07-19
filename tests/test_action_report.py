@@ -68,3 +68,42 @@ def test_cli_shim_usage_error():
         [sys.executable, "-m", "otto.action.report"], capture_output=True, text=True,
     )
     assert proc.returncode == 2
+
+
+def _make_finding(i):
+    return {
+        "rule_id": f"rule_{i}", "regulation": "lgpd", "severity": "high",
+        "category": "sensitive_data", "article": "LGPD Art. 46",
+        "message": "m", "fix": "f", "fine": "x",
+        "file_path": f"src/app{i}.js", "line": i, "matched_text": "x", "note": "",
+    }
+
+
+def test_findings_table_capped_at_50_rows():
+    report = {
+        "regulation": "both", "score": 0, "per_file": {},
+        "counts": {"critical": 0, "high": 51, "medium": 0, "low": 0},
+        "findings": [_make_finding(i) for i in range(51)],
+    }
+    body = build_comment(report)
+    # 50 data rows + 1 header separator line ("|---|...") -- count table rows
+    # via the distinctive "rule_" ids we generated.
+    row_count = sum(1 for line in body.splitlines() if line.startswith("| ") and "rule_" in line)
+    assert row_count == 50
+    assert "...and 1 more finding(s)" in body or "and 1 more finding(s)" in body
+    assert "run `python3 -m otto scan` locally for the full report" in body
+
+
+def test_backtick_in_fix_text_does_not_break_cell():
+    report = {
+        "regulation": "both", "score": 59, "per_file": {"src/app.js": 59},
+        "counts": {"critical": 1, "high": 0, "medium": 0, "low": 0},
+        "findings": [{
+            "rule_id": "cpf_exposure", "regulation": "lgpd", "severity": "critical",
+            "category": "sensitive_data", "article": "LGPD Art. 46",
+            "message": "m", "fix": "Use `env.CPF` instead", "fine": "x",
+            "file_path": "src/app.js", "line": 1, "matched_text": "x", "note": "",
+        }],
+    }
+    body = build_comment(report)
+    assert "`" not in body.split("Use", 1)[1].split("instead", 1)[0]

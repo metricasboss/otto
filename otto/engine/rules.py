@@ -16,6 +16,7 @@ DEFAULT_EXCLUDES = [
     "**/fixtures/**",
     "**/node_modules/**",
     "**/.git/**",
+    "**/skills/*/patterns.json",
 ]
 
 REQUIRED_FIELDS = ("regex", "severity", "article", "message", "fix")

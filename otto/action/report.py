@@ -6,10 +6,11 @@ from typing import List, Optional
 
 MARKER = "<!-- otto-privacy-report -->"
 _SEV_EMOJI = {"critical": "🚨", "high": "⚠️", "medium": "⚡", "low": "ℹ️"}
+MAX_TABLE_ROWS = 50
 
 
 def _cell(text: str) -> str:
-    return str(text).replace("|", "\\|").replace("\n", " ")
+    return str(text).replace("|", "\\|").replace("\n", " ").replace("`", "′")
 
 
 def build_comment(report: dict) -> str:
@@ -26,7 +27,9 @@ def build_comment(report: dict) -> str:
         lines += [f"❌ **{len(findings)} finding(s)** in changed files:", "",
                   "| Severity | Location | Rule | Legal basis | Fine risk | Suggested fix |",
                   "|---|---|---|---|---|---|"]
-        for f in findings:
+        shown = findings[:MAX_TABLE_ROWS]
+        remaining = len(findings) - len(shown)
+        for f in shown:
             lines.append(
                 f"| {_SEV_EMOJI.get(f['severity'], '')} {_cell(f['severity'])} "
                 f"| `{_cell(f['file_path'])}:{f['line']}` "
@@ -34,6 +37,11 @@ def build_comment(report: dict) -> str:
                 f"| {_cell(f['article'])} "
                 f"| {_cell(f['fine'])} "
                 f"| {_cell(f['fix'])} |"
+            )
+        if remaining > 0:
+            lines.append(
+                f"_...and {remaining} more finding(s) — run `python3 -m otto scan` "
+                "locally for the full report._"
             )
     lines += ["", "---",
               "_Deterministic score by [OTTO](https://github.com/metricasboss/otto)"

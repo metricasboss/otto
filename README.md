@@ -171,8 +171,9 @@ introduces, not the repo's pre-existing debt. Any critical finding caps the
 score at 59, so a hardcoded CPF can never pass a default gate.
 
 **Limitations:** fork PRs run with a read-only token — the comment and SARIF
-upload are skipped with a warning, but the gate still enforces. SARIF
-annotations on private repos require GitHub Advanced Security.
+upload may fail without failing the job (the steps are fenced with
+continue-on-error), but the gate still enforces. SARIF annotations on
+private repos require GitHub Advanced Security.
 
 ---
 
