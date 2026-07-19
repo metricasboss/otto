@@ -84,3 +84,30 @@ def test_innocent_health_object_not_denied():
     assert code == 0
     if out is not None:
         assert "hookSpecificOutput" not in out
+
+
+def test_multiedit_payload_scanned():
+    code, out = run_hook({
+        "tool_name": "MultiEdit",
+        "tool_input": {
+            "file_path": "src/app.js",
+            "edits": [
+                {"old_string": "a", "new_string": "const ok = true;"},
+                {"old_string": "b", "new_string": 'const cpf = "529.982.247-25";'},
+            ],
+        },
+    })
+    assert code == 0
+    assert out["hookSpecificOutput"]["permissionDecision"] == "deny"
+
+
+def test_multiedit_clean_payload_silent():
+    code, out = run_hook({
+        "tool_name": "MultiEdit",
+        "tool_input": {
+            "file_path": "src/app.js",
+            "edits": [{"old_string": "a", "new_string": "const ok = true;"}],
+        },
+    })
+    assert code == 0
+    assert out is None
