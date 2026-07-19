@@ -1,12 +1,25 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 from typing import List
 
 from otto.engine.scanner import Finding
 from otto.engine.scorer import ScoreResult
 
 _LEVELS = {"critical": "error", "high": "error", "medium": "warning", "low": "note"}
+
+
+def _relative_uri(file_path: str) -> str:
+    if not file_path:
+        return "stdin"
+    path = Path(file_path)
+    if path.is_absolute():
+        try:
+            return path.resolve().relative_to(Path.cwd().resolve()).as_posix()
+        except ValueError:
+            return file_path
+    return path.as_posix()
 
 
 def render(findings: List[Finding], score: ScoreResult, regulation: str) -> str:
@@ -30,7 +43,7 @@ def render(findings: List[Finding], score: ScoreResult, regulation: str) -> str:
                 "locations": [
                     {
                         "physicalLocation": {
-                            "artifactLocation": {"uri": f.file_path or "stdin"},
+                            "artifactLocation": {"uri": _relative_uri(f.file_path)},
                             "region": {"startLine": f.line},
                         }
                     }

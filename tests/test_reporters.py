@@ -1,3 +1,4 @@
+import dataclasses
 import json
 
 from otto.engine.reporters import get_renderer
@@ -57,3 +58,29 @@ def test_unknown_format_raises():
     import pytest
     with pytest.raises(ValueError):
         get_renderer("xml")
+
+
+def _finding_at(path):
+    return dataclasses.replace(FINDING, file_path=path)
+
+
+def test_sarif_relativizes_paths_under_cwd(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    f = _finding_at(str(tmp_path / "src" / "app.js"))
+    doc = json.loads(get_renderer("sarif")([f], SCORE, "lgpd"))
+    uri = doc["runs"][0]["results"][0]["locations"][0]["physicalLocation"]["artifactLocation"]["uri"]
+    assert uri == "src/app.js"
+
+
+def test_sarif_leaves_outside_paths_absolute(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path / "." if (tmp_path / ".").exists() else tmp_path)
+    f = _finding_at("/somewhere/else/app.js")
+    doc = json.loads(get_renderer("sarif")([f], SCORE, "lgpd"))
+    uri = doc["runs"][0]["results"][0]["locations"][0]["physicalLocation"]["artifactLocation"]["uri"]
+    assert uri == "/somewhere/else/app.js"
+
+
+def test_sarif_relative_path_stays_posix():
+    doc = json.loads(get_renderer("sarif")([_finding_at("src/app.js")], SCORE, "lgpd"))
+    uri = doc["runs"][0]["results"][0]["locations"][0]["physicalLocation"]["artifactLocation"]["uri"]
+    assert uri == "src/app.js"
