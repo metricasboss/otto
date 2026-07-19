@@ -1,0 +1,124 @@
+name: "OTTO Privacy Review"
+description: "LGPD/GDPR privacy review for AI-era codebases: deterministic 0-100 score, article citations and suggested fixes on every PR"
+branding:
+  icon: shield
+  color: green
+
+inputs:
+  fail-under:
+    description: "Fail the check if the privacy score is below this value (0 disables the gate)"
+    default: "60"
+  regulation:
+    description: "lgpd, gdpr or both"
+    default: "both"
+  comment:
+    description: "Post/update the sticky PR comment"
+    default: "true"
+  sarif:
+    description: "Upload SARIF to GitHub Code Scanning"
+    default: "true"
+
+runs:
+  using: composite
+  steps:
+    - name: Guard event type
+      shell: bash
+      run: |
+        if [ "$GITHUB_EVENT_NAME" != "pull_request" ]; then
+          echo "::error::OTTO action supports pull_request events only (got $GITHUB_EVENT_NAME)"
+          exit 1
+        fi
+
+    - uses: actions/setup-python@v6
+      with:
+        python-version: "3.12"
+
+    - name: Detect changed files
+      id: files
+      shell: bash
+      working-directory: ${{ github.workspace }}
+      run: |
+        git fetch --no-tags origin "$GITHUB_BASE_REF"
+        git diff --name-only --diff-filter=d "origin/$GITHUB_BASE_REF...HEAD" > "$RUNNER_TEMP/otto-files.txt"
+        : > "$RUNNER_TEMP/otto-existing.txt"
+        while IFS= read -r f; do
+          [ -f "$f" ] && printf '%s\n' "$f" >> "$RUNNER_TEMP/otto-existing.txt"
+        done < "$RUNNER_TEMP/otto-files.txt"
+        count=$(wc -l < "$RUNNER_TEMP/otto-existing.txt" | tr -d ' ')
+        echo "count=$count" >> "$GITHUB_OUTPUT"
+        echo "OTTO: $count changed file(s) to scan"
+
+    - name: Scan changed files
+      if: steps.files.outputs.count != '0'
+      shell: bash
+      working-directory: ${{ github.workspace }}
+      env:
+        PYTHONPATH: ${{ github.action_path }}
+      run: |
+        xargs -a "$RUNNER_TEMP/otto-existing.txt" \
+          python3 -m otto scan --regulation "${{ inputs.regulation }}" --fail-under 0 --format json \
+          > "$RUNNER_TEMP/otto-report.json"
+        xargs -a "$RUNNER_TEMP/otto-existing.txt" \
+          python3 -m otto scan --regulation "${{ inputs.regulation }}" --fail-under 0 --format sarif \
+          > "$RUNNER_TEMP/otto.sarif"
+
+    - name: Build comment body
+      if: inputs.comment == 'true'
+      shell: bash
+      working-directory: ${{ github.workspace }}
+      env:
+        PYTHONPATH: ${{ github.action_path }}
+      run: |
+        if [ "${{ steps.files.outputs.count }}" = "0" ]; then
+          printf '%s' '{"regulation":"${{ inputs.regulation }}","score":100,"per_file":{},"counts":{"critical":0,"high":0,"medium":0,"low":0},"findings":[]}' \
+            > "$RUNNER_TEMP/otto-report.json"
+        fi
+        python3 -m otto.action.report "$RUNNER_TEMP/otto-report.json" > "$RUNNER_TEMP/otto-comment.md"
+
+    - name: Upsert sticky comment
+      if: inputs.comment == 'true'
+      uses: actions/github-script@v9
+      continue-on-error: true
+      env:
+        COMMENT_PATH: ${{ runner.temp }}/otto-comment.md
+      with:
+        script: |
+          const fs = require('fs');
+          const body = fs.readFileSync(process.env.COMMENT_PATH, 'utf8');
+          const marker = '<!-- otto-privacy-report -->';
+          const {data: comments} = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+            per_page: 100,
+          });
+          const existing = comments.find(c => c.body && c.body.includes(marker));
+          if (existing) {
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner, repo: context.repo.repo,
+              comment_id: existing.id, body,
+            });
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: context.issue.number, body,
+            });
+          }
+
+    - name: Upload SARIF
+      if: inputs.sarif == 'true' && steps.files.outputs.count != '0'
+      uses: github/codeql-action/upload-sarif@v4
+      continue-on-error: true
+      with:
+        sarif_file: ${{ runner.temp }}/otto.sarif
+
+    - name: Privacy gate
+      if: steps.files.outputs.count != '0'
+      shell: bash
+      working-directory: ${{ github.workspace }}
+      env:
+        PYTHONPATH: ${{ github.action_path }}
+      run: |
+        xargs -a "$RUNNER_TEMP/otto-existing.txt" \
+          python3 -m otto scan --regulation "${{ inputs.regulation }}" \
+          --fail-under "${{ inputs.fail-under }}" --format text
