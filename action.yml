@@ -17,6 +17,9 @@ inputs:
   sarif:
     description: "Upload SARIF to GitHub Code Scanning"
     default: "true"
+  github-token:
+    description: "Token used to post the sticky comment. Pass a GitHub App installation token (e.g. from actions/create-github-app-token) to have the comment appear as your app's bot instead of github-actions"
+    default: ${{ github.token }}
 
 runs:
   using: composite
@@ -87,6 +90,7 @@ runs:
       env:
         COMMENT_PATH: ${{ runner.temp }}/otto-comment.md
       with:
+        github-token: ${{ inputs.github-token }}
         script: |
           const fs = require('fs');
           const body = fs.readFileSync(process.env.COMMENT_PATH, 'utf8');
