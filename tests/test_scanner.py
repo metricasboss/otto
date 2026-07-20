@@ -98,3 +98,16 @@ def test_multiline_match_otto_ignore_on_final_line_suppresses():
     )
     findings = scan_content(content, "src/app.js", [MULTILINE_RULE])
     assert findings == []
+
+
+def test_case_sensitive_rule_skips_lowercase():
+    rule = Rule(id="ns", regex="\\b[A-Z]{2}\\d{6,9}[A-Z]?\\b", severity="high",
+                article="X", message="m", fix="f", exclude_files=[], case_sensitive=True)
+    assert scan_content('const sha = "ab1234567";\n', "src/a.js", [rule]) == []
+    assert len(scan_content('const id = "AB1234567";\n', "src/a.js", [rule])) == 1
+
+
+def test_case_insensitive_default_matches_lowercase():
+    rule = Rule(id="ns", regex="\\b[A-Z]{2}\\d{6,9}[A-Z]?\\b", severity="high",
+                article="X", message="m", fix="f", exclude_files=[])
+    assert len(scan_content('const sha = "ab1234567";\n', "src/a.js", [rule])) == 1

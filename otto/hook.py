@@ -30,7 +30,14 @@ def main(stdin: Optional[TextIO] = None, stdout: Optional[TextIO] = None) -> int
         return 0
 
     tool_input = data.get("tool_input", {})
-    content = tool_input.get("new_string") or tool_input.get("content") or ""
+    parts = [
+        tool_input.get("new_string") or "",
+        tool_input.get("content") or "",
+    ]
+    edits = tool_input.get("edits")
+    if isinstance(edits, list):
+        parts += [e.get("new_string") or "" for e in edits if isinstance(e, dict)]
+    content = "\n".join(p for p in parts if p)
     file_path = tool_input.get("file_path", "")
     if not content:
         return 0

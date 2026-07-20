@@ -102,7 +102,8 @@ def scan_content(content: str, file_path: str, rules: List[Rule]) -> List[Findin
         if not _applies_to_file(file_path, rule):
             continue
         try:
-            matches = re.finditer(rule.regex, content, re.IGNORECASE | re.MULTILINE)
+            flags = re.MULTILINE if rule.case_sensitive else re.IGNORECASE | re.MULTILINE
+            matches = re.finditer(rule.regex, content, flags)
         except re.error as exc:
             print(f"otto: skipping rule '{rule.id}' (invalid regex: {exc})", file=sys.stderr)
             continue

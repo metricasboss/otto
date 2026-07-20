@@ -72,3 +72,12 @@ def test_otto_ignore_other_rule_does_not_suppress():
 def test_empty_file_path_scans_everything():
     # Hook mode may pass empty file_path; globs must not exclude it.
     assert len(scan_content(VALID_CPF, "", [CPF_RULE])) == 1
+
+
+def test_default_excludes_skip_skill_patterns_json():
+    # OTTO's own rule definitions (skills/*/patterns.json) contain the
+    # keywords they match on (e.g. "biometric_data" matching itself), which
+    # would make OTTO fail its own dogfood scan. They must be excluded by
+    # default regardless of nesting depth.
+    assert scan_content(VALID_CPF, "skills/lgpd/patterns.json", [CPF_RULE]) == []
+    assert scan_content(VALID_CPF, "src/skills/gdpr/patterns.json", [CPF_RULE]) == []

@@ -44,3 +44,8 @@ def test_missing_field_raises(tmp_path):
     bad.write_text('{"broken": {"regex": "x"}}')
     with pytest.raises(ValueError, match="broken"):
         load_rules("lgpd", base_dir=tmp_path)
+
+
+def test_case_sensitive_defaults_false():
+    rule = next(r for r in load_rules("lgpd") if r.id == "cpf_exposure")
+    assert rule.case_sensitive is False

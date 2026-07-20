@@ -12,11 +12,13 @@ jobs:
       matrix:
         python-version: ["3.9", "3.12"]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
       - run: pip install pytest
       - run: python3 -m pytest tests/ -v
       - name: OTTO self-scan (sanity)
         run: python3 -m otto scan examples/unsafe_code.js --fail-under 0
+      - name: OTTO self-scan canary (no self-matching regressions)
+        run: python3 -m otto scan otto/ skills/ scripts/ --fail-under 100

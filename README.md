@@ -131,6 +131,50 @@ When hooks are enabled on Claude Code:
 - **CI/CD ready**: Can integrate into your build pipeline
 - Critical violations deny the edit via a PreToolUse hook; the agent receives the article and suggested fix and can self-correct.
 
+### GitHub Action (PR privacy review)
+
+Add OTTO to any repository's CI — every pull request gets a deterministic
+0-100 privacy score, findings with the violated LGPD/GDPR article and fine
+exposure, inline annotations (via Code Scanning), and a failing check when
+the score drops below your gate.
+
+```yaml
+# .github/workflows/otto.yml
+name: privacy
+on: pull_request
+permissions:
+  contents: read
+  pull-requests: write      # sticky score comment
+  security-events: write    # SARIF annotations (optional)
+jobs:
+  otto:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0    # required: OTTO diffs against the PR base
+      - uses: metricasboss/otto@main
+        with:
+          fail-under: 60    # fail the check below this score (0 = report-only)
+          regulation: both  # lgpd | gdpr | both
+```
+
+| input | default | description |
+|---|---|---|
+| `fail-under` | `60` | Fail the check if the PR score is below this value; `0` disables the gate |
+| `regulation` | `both` | `lgpd`, `gdpr` or `both` |
+| `comment` | `true` | Post/update the sticky score comment |
+| `sarif` | `true` | Upload SARIF for inline annotations |
+
+Only the files changed by the PR are scanned — your PR is scored on what it
+introduces, not the repo's pre-existing debt. Any critical finding caps the
+score at 59, so a hardcoded CPF can never pass a default gate.
+
+**Limitations:** fork PRs run with a read-only token — the comment and SARIF
+upload may fail without failing the job (the steps are fenced with
+continue-on-error), but the gate still enforces. SARIF annotations on
+private repos require GitHub Advanced Security.
+
 ---
 
 ## Usage

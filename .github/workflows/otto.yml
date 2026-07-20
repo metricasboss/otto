@@ -1,0 +1,19 @@
+name: privacy
+
+on: pull_request
+
+permissions:
+  contents: read
+  pull-requests: write
+  security-events: write
+
+jobs:
+  otto:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: ./
+        with:
+          fail-under: "60"
