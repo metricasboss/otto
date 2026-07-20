@@ -10,10 +10,22 @@ permissions:
 jobs:
   otto:
     runs-on: ubuntu-latest
+    env:
+      OTTO_APP_ID: ${{ secrets.OTTO_APP_ID }}
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+      # Optional branding: when the OTTO App secrets are configured, the
+      # sticky comment is posted by otto[bot] with Otto's avatar.
+      - name: Mint OTTO App token
+        id: app-token
+        if: env.OTTO_APP_ID != ''
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.OTTO_APP_ID }}
+          private-key: ${{ secrets.OTTO_APP_PRIVATE_KEY }}
       - uses: ./
         with:
           fail-under: "60"
+          github-token: ${{ steps.app-token.outputs.token || github.token }}

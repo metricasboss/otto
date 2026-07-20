@@ -165,6 +165,7 @@ jobs:
 | `regulation` | `both` | `lgpd`, `gdpr` or `both` |
 | `comment` | `true` | Post/update the sticky score comment |
 | `sarif` | `true` | Upload SARIF for inline annotations |
+| `github-token` | workflow token | Token used to post the comment; pass a GitHub App installation token for custom bot branding |
 
 Only the files changed by the PR are scanned — your PR is scored on what it
 introduces, not the repo's pre-existing debt. Any critical finding caps the
@@ -174,6 +175,37 @@ score at 59, so a hardcoded CPF can never pass a default gate.
 upload may fail without failing the job (the steps are fenced with
 continue-on-error), but the gate still enforces. SARIF annotations on
 private repos require GitHub Advanced Security.
+
+#### Optional: comment as your own bot (custom avatar)
+
+By default the score comment is posted by `github-actions[bot]`. To have it
+posted by your own bot identity (name + avatar), create a GitHub App — no
+server needed:
+
+1. Org **Settings → Developer settings → GitHub Apps → New GitHub App**:
+   pick a name (e.g. "OTTO Privacy Guardian"), uncheck **Webhook → Active**,
+   grant only **Pull requests: Read & write**, and upload your avatar image.
+2. **Generate a private key** (downloads a `.pem`) and **install the App**
+   on the repositories that run OTTO.
+3. Add two repo/org secrets: `OTTO_APP_ID` (the App ID) and
+   `OTTO_APP_PRIVATE_KEY` (the `.pem` contents).
+4. Mint a token in your workflow and hand it to OTTO:
+
+```yaml
+      - name: Mint bot token
+        id: app-token
+        if: env.OTTO_APP_ID != ''
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.OTTO_APP_ID }}
+          private-key: ${{ secrets.OTTO_APP_PRIVATE_KEY }}
+      - uses: metricasboss/otto@main
+        with:
+          github-token: ${{ steps.app-token.outputs.token || github.token }}
+```
+
+(Set `OTTO_APP_ID` as a job-level `env:` from the secret so the `if:` guard
+degrades gracefully when the secrets aren't configured.)
 
 ---
 
